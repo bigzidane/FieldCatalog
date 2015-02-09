@@ -1,0 +1,40 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Open Product</ui:define>
+
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+			
+		<h:form id="formProduct">
+			<p:panel id="pnlProduct" header="Open A Product">
+				<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="product" value="Product" />
+		            <p:selectOneMenu id="product" value="#{listProductBean.product}" converter="productConverter" required="true">
+		                <p:ajax listener="#{listProductBean.onProductChange}" update="dropDownProductVersion" />
+		                <f:selectItem itemLabel="Select Product" itemValue="" noSelectionOption="true"  />
+		                <f:selectItems value="#{listProductBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product}"/>
+		            </p:selectOneMenu>  
+		            
+		            <p:outputLabel for="dropDownProductVersion" value="Product Version" />
+		            <p:selectOneMenu id="dropDownProductVersion" value="#{listProductBean.productVersion}" converter="productVersionConverter"  required="true">
+		            	<f:selectItem itemLabel="Select Version" itemValue="" noSelectionOption="true"  />
+		                <f:selectItems value="#{listProductBean.productVersions}" var="p" itemLabel="#{p.name}" itemValue="#{p}"/>
+		            </p:selectOneMenu>  
+		            
+		                        
+				</h:panelGrid>
+				
+				<p:commandButton id="btnOpen" value="Open" action="#{listProductBean.openProduct}" icon="ui-icon-open" update="formProduct"/>
+				
+			</p:panel>
+		</h:form>
+	</ui:define> 
+</ui:composition>

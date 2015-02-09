@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright (c) 2015, ItServicesDepot.com All rights reserved. 
+	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. 
+	
+	Please contact ItServicesDepot.com or NghiaDo (dothanhtrongnghia@yahoo.com) 
+	if you need	additional information or have any questions. 
+-->
+
+<!-- This file contains all Dozer configuration for Field Catalog application -->
+
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping>
+		<class-a>com.itservicesdepot.model.Screens</class-a>
+		<class-b>com.itservicesdepot.model.SearchResults</class-b>
+		<field custom-converter="com.itservicesdepot.converter.SearchResultConverter">
+			<a>screens</a> 
+			<b>searchResults</b> 
+			<a-hint>com.itservicesdepot.model.Screen</a-hint> 
+			<b-hint>com.itservicesdepot.model.SearchResult</b-hint> 
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.itservicesdepot.model.Fields</class-a>
+		<class-b>com.itservicesdepot.model.SearchResults</class-b>
+		<field custom-converter="com.itservicesdepot.converter.SearchResultConverter">
+			<a>fields</a> 
+			<b>searchResults</b> 
+			<a-hint>com.itservicesdepot.model.Field</a-hint> 
+			<b-hint>com.itservicesdepot.model.SearchResult</b-hint> 
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.itservicesdepot.model.Products</class-a>
+		<class-b>com.itservicesdepot.model.SearchResults</class-b>
+		<field custom-converter="com.itservicesdepot.converter.SearchResultConverter">
+			<a>products</a> 
+			<b>searchResults</b> 
+			<a-hint>com.itservicesdepot.model.Product</a-hint> 
+			<b-hint>com.itservicesdepot.model.SearchResult</b-hint> 
+		</field>
+	</mapping>
+</mappings>

@@ -1,0 +1,46 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Add Product Version</ui:define>
+
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+			
+		<h:form id="formProduct">
+			<p:panel id="pnlProduct" header="Add Product Version">
+				<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="product" value="Product" />
+		            <p:selectOneMenu id="product" value="#{productVersionBean.product}" converter="productConverter" required="true">
+		                <p:ajax listener="#{productVersionBean.onProductChange}" update="dropDownProductVersion" />
+		                <f:selectItem itemLabel="Select Product" itemValue="" noSelectionOption="true"  />
+		                <f:selectItems value="#{productVersionBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product}"/>
+		            </p:selectOneMenu>  
+		            
+		            <p:outputLabel id="lblVersion" value="Version" for="version"></p:outputLabel>
+		            <p:inputMask id="version" value="#{productVersionBean.newProductVersion.name}" mask="99.99.999" required="true"/>
+		            
+		            <p:outputLabel id="lblVersionDescription" value="Description" for="versionDescription"></p:outputLabel>
+		            <p:inputMask id="versionDescription" value="#{productVersionBean.newProductVersion.description}"/>
+		            
+		            <p:outputLabel for="dropDownProductVersion" value="Clone from" />
+		            <p:selectOneMenu id="dropDownProductVersion" value="#{productVersionBean.productVersion}" converter="productVersionConverter">
+		            	<f:selectItem itemLabel="Blank" itemValue="" />
+		                <f:selectItems value="#{productVersionBean.productVersions}" var="p" itemLabel="#{p.name}" itemValue="#{p}"/>
+		            </p:selectOneMenu>  
+		            
+		                        
+				</h:panelGrid>
+				
+				<p:commandButton id="btnOpen" value="Save" action="#{productVersionBean.addProductVersion}" icon="ui-icon-open" update="formProduct"/>
+				
+			</p:panel>
+		</h:form>
+	</ui:define> 
+</ui:composition>

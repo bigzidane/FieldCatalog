@@ -1,0 +1,100 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Field List</ui:define>
+
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="field.js" target="head" />
+			
+		<h:form id="formFieldList">	
+			<p:toolbar style="margin-bottom:10px;" >
+        		<f:facet name="left">
+        			<h:panelGroup>
+                		<h:outputText value="Search: " />
+                		<p:inputText id="searchFilter" widgetVar="searchFilterVar" style="width:150px" placeholder="Enter keyword" onkeyup="onSearchFilter(this)"/>
+            		</h:panelGroup>
+        			
+		        </f:facet>
+ 
+        		<f:facet name="right">
+        			<p:selectOneMenu id="fieldFilter" onchange="onFieldChange(this)">
+		                <f:selectItem itemLabel="Select Field" itemValue=""/>
+		                <f:selectItems value="#{listFieldBean.fields}" var="field" itemLabel="#{field.name}" itemValue="#{field.id}"/>
+		            </p:selectOneMenu>
+		            
+		            <span class="ui-separator"/>
+		            
+        			<p:selectOneMenu id="screenFilter" onchange="onScreenChange(this)">
+		                <f:selectItem itemLabel="Select Screen" itemValue=""/>
+		                <f:selectItems value="#{listFieldBean.screens}" var="screen" itemLabel="#{screen.name}" itemValue="#{screen.id}"/>
+		            </p:selectOneMenu>
+		            
+		            <span class="ui-separator"/>
+		            
+        			<p:selectOneMenu id="productFilter" onchange="onProductChange(this)">
+		                <f:selectItem itemLabel="Select Product" itemValue=""/>
+		                <f:selectItems value="#{listFieldBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product.id}"/>
+		            </p:selectOneMenu>
+		            
+		            <span class="ui-separator"/>
+		            
+		            <p:selectOneMenu id="productVersionFilter" onchange="onProductVersionChange(this)">
+		            	<f:selectItem itemLabel="Select Version" itemValue="" />
+		                <f:selectItems value="#{listFieldBean.allProductVersions}" var="pv" itemLabel="#{pv.name}" itemValue="#{pv.name}"/>
+		            </p:selectOneMenu>
+				</f:facet>
+			</p:toolbar>
+			
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+				        			
+	    	<p:dataTable id="dtFieldList" value="#{listFieldBean.fields}" var="field" widgetVar="fieldsTable"
+	    				rows="10" paginator="true" 
+	    				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="10,50,100" paginatorPosition="bottom">
+                <f:facet name="header">
+	    			<p:outputPanel >
+	    				<p:inputText id="globalFilter" onkeyup="PF('fieldsTable').filter()" widgetVar="globalFilterVar"/>
+	    			</p:outputPanel>
+	    		</f:facet>
+	    		
+	            <p:column headerText="Name" width="10%"  filterBy="#{field.name}" filterMatchMode="contains" filterStyleClass="hide" id="nameFilter">
+	                <p:commandLink value="#{field.name}" action="#{listFieldBean.showField(field)}" ajax="false"/>
+	            </p:column>
+	            <p:column headerText="Description"  filterBy="#{field.description}" filterMatchMode="contains" filterStyleClass="hide">
+	                <h:outputText value="#{field.description}"/>
+	            </p:column>
+	            <p:column headerText="Screen" width="10%" filterBy="#{field.screen.name}" filterMatchMode="contains" filterStyleClass="hide" id="screenNameFilter">
+	                <h:outputText value="#{field.screen.name}"/>
+	            </p:column>
+	            <p:column headerText="Product" width="10%" filterBy="#{field.screen.productVersion.product.name}" filterMatchMode="contains" filterStyleClass="hide" id="productNameFilter">
+	                <h:outputText value="#{field.screen.productVersion.product.name}"/>
+	            </p:column>
+	            <p:column headerText="Product Version" width="10%" filterBy="#{field.screen.productVersion.name}" filterMatchMode="contains" filterStyleClass="hide" id="productVersionFilter" styleClass="alignCenter">
+	                <h:outputText value="#{field.screen.productVersion.name}"/>
+	            </p:column>
+	            <p:column headerText="Active" width="5%"  filterBy="#{field.isActive}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{field.isActive eq 'Y' ? 'Yes' : 'No'}"/>
+	            </p:column>
+	            <p:column headerText="Effective Date" width="8%"  filterBy="#{field.effectiveDate}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{field.effectiveDate}">
+	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Expiration Date" width="8%"  filterBy="#{field.expirationDate}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{field.expirationDate}">
+	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Owner" width="8%"  filterBy="#{field.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
+	                <h:outputText value="#{field.owner.displayName}">
+	                </h:outputText>
+	            </p:column>
+	        </p:dataTable>
+		</h:form>
+	</ui:define> 
+</ui:composition>

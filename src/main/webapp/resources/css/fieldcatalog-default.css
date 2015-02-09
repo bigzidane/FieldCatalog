@@ -1,0 +1,109 @@
+/**
+ *  Copyright (c) 2015, ItServicesDepot.com All rights reserved.
+ *  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. 
+ *	
+ *	Please contact ItServicesDepot.com or NghiaDo (dothanhtrongnghia@yahoo.com) 
+ *	if you need	additional information or have any questions. 
+ */
+
+/**
+ * 	This file contains all styles in Field Catalog application
+ */
+
+body {
+	background-color: #c6f2ff;
+}
+
+.fullWidth {
+	width: 100% !important;
+}
+
+/* Begin styles for login.xhtml */
+.loginPanel {
+    position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+}
+
+.loginPanel tr, .loginPanel td {
+    border-style: hidden !important;
+}
+
+.vAlignTop {
+	vertical-align: top;
+}
+
+.vAlignMiddle {
+	vertical-align: middle;
+}
+
+.alignLeft {
+	text-align: left;
+	align: left;
+}
+
+.alignCenter {
+	text-align: center !important;
+}
+
+.textWidthLong {
+	width: 250px;
+}
+/* End styles for login.xhtml */
+
+.custFieldPanel tr {
+	vertical-align: top;
+}
+
+/* Override all f:selectItems */
+li.ui-selectonemenu-item{
+	font-size:11px !important;
+}
+
+.textBold {
+	font-weight: bold
+}
+
+a.ui-menuitem-link { 
+	text-decoration:none; 
+}
+
+.marginTab {
+	margin-bottom:10px !important;
+}
+
+.permissionPanel tr, .permissionPanel td {
+	border-style: hidden !important;
+    vertical-align: top;
+    align: left;
+}
+
+.eventLabel {
+	width: 10%;
+}
+
+.eventValue {
+	width: 90%;
+}
+
+.ui-datatable .ui-datatable-header {
+   display: none; 
+}
+
+.hide {
+ 	display:none !important;
+}
+
+.removeBorder {
+	border-style: hidden !important;	
+}
+
+.removePadding {
+ 	padding: 0px 0px 0px 0px !important; 
+}
+
+.navBar.div {
+	padding: 5px 5px 7px 5px !important;
+}

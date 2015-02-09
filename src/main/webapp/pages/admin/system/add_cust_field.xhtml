@@ -1,0 +1,60 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Custom Fields</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:form id="formCustFieldMgnt">
+ 			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+	           <p:panel header="Add A New Custom Field">
+	           		<f:facet name="actions">
+			            <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"><h:outputText styleClass="ui-icon ui-icon-help" /></h:commandLink>
+			        </f:facet>
+	             <h:panelGrid columns="2">
+	             	<p:outputLabel id="lblTarget" for="dropdownTarget" value="Target" />
+					<p:selectOneMenu id="dropdownTarget" 
+						value="#{custFieldMgntBean.custField.target}" required="true">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{custFieldMgntBean.targets}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel id="lblName" for="txtName" value="Name" />
+					<p:inputText id="txtName" required="true" value="#{custFieldMgntBean.custField.fieldId}">
+						<pe:keyFilter regEx="/[a-z_]/i"/>
+						<f:validateRegex pattern="^[a-zA-Z]+$" />
+					</p:inputText>
+						
+					<p:outputLabel id="lblLabel" for="txtLabel" value="Label" />
+					<p:inputText id="txtLabel" required="true" value="#{custFieldMgntBean.custField.label}"></p:inputText>
+
+					<p:outputLabel id="lblType" for="dropdownType" value="Type" />
+					<p:selectOneMenu id="dropdownType" value="#{custFieldMgntBean.custField.type}" required="true">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{custFieldMgntBean.custFieldTypes}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel id="lblPreface" value="Preface"></p:outputLabel>
+		            <p:inputText id="txtReface" value="#{custFieldMgntBean.custField.preface}"></p:inputText>
+		            
+					<p:outputLabel id="lblTooltip" for="txtTooltip" value="Tooltip" />
+					<p:inputText id="txtTooltip" value="#{custFieldMgntBean.custField.title}"></p:inputText>
+
+					<p:outputLabel id="lblIsRequired" value="Required"></p:outputLabel>
+		            <p:selectBooleanCheckbox value="#{custFieldMgntBean.custField.isRequired}" />
+		            
+		            <p:outputLabel id="lblValue" value="Value"></p:outputLabel>
+		            <p:inputText id="txtValue" value="#{custFieldMgntBean.custField.value}"></p:inputText>
+		            
+					<f:facet name="footer">
+		                <p:commandButton id="btnAdd" value="Add" action="#{custFieldMgntBean.addCustField}" update="formCustFieldMgnt"></p:commandButton>
+		            </f:facet>
+	             </h:panelGrid>
+	         </p:panel>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

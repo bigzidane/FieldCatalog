@@ -1,0 +1,120 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Manage Users</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:outputScript library="js" name="user.js" target="head" />
+ 		
+		<h:form id="formUserMgnt">
+			
+			<pe:masterDetail id="pnlUserList" selectLevelListener="#{listGroupLevelListener.handleNavigation}" showAllBreadcrumbItems="true" level="1">
+				<f:facet name="header">
+			        <p:messages id="messages" showDetail="true" closable="true" showSummary="false" />
+			    </f:facet>
+			    
+			    <pe:masterDetailLevel level="1">
+			        <f:facet name="label">
+			            <h:outputFormat value="User List"/>
+			        </f:facet>
+			        
+			        <p:dataTable id="userTable" var="user" value="#{userMgntBean.users}" widgetVar="userVar">
+				       	<p:column headerText="E-mail" style="width:20%">
+				       		<p:commandLink value="#{user.email}" actionListener="#{userMgntBean.showUser(user)}">
+			                    <pe:selectDetailLevel contextValue="#{user}" />
+			                </p:commandLink>
+			          	</p:column>
+				 
+						<p:column headerText="First Name">
+				        	<h:outputText value="#{user.firstName}" />
+				       	</p:column>
+				       	
+				       	<p:column headerText="Last Name">
+				        	<h:outputText value="#{user.lastName}" />
+				       	</p:column>
+				       	
+				       	<p:column headerText="Active" style="width:5%" styleClass="alignCenter">
+							<h:outputText value="#{user.isActive eq 'Y' ? 'Yes' : 'No'}" />
+				       	</p:column>
+				       	
+				       	<p:column headerText="Effective Date" width="15%" styleClass="alignCenter">
+							<h:outputText value="#{user.effectiveDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>
+				       	</p:column>
+				       	
+				       	<p:column headerText="Expiration Date" width="15%" styleClass="alignCenter">
+							<h:outputText value="#{user.expirationDate}">
+				            	<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>
+				       	</p:column>
+					</p:dataTable>
+			    </pe:masterDetailLevel>
+			    
+			    <pe:masterDetailLevel level="2" contextVar="user" levelLabel="User Detail">
+			    	<p:tabView widgetVar="tabUser" styleClass="marginTab" activeIndex="0" id="tabUserDetail">
+						<p:tab title="Primary">
+				             <h:panelGrid columns="2">
+								<p:outputLabel id="lblName" for="txtName" value="Name" />
+								<p:inputText id="txtName" required="true" value="#{userMgntBean.user.email}" readonly="true">
+									<f:validateLength minimum="3" maximum="45" />
+								</p:inputText>
+									
+								<p:outputLabel id="lblFirstName" for="txtFirstName" value="First Name" />
+								<p:inputText id="txtFirstName" required="true" value="#{userMgntBean.user.firstName}"/>
+								
+								<p:outputLabel id="lblLastName" for="txtLastName" value="Last Name" />
+								<p:inputText id="txtLastName" required="true" value="#{userMgntBean.user.lastName}"/>
+			
+								<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+								<p:selectBooleanCheckbox value="#{userMgntBean.user.isActiveBool}" />
+								
+								<p:outputLabel id="lblIsLocked" value="Locked"></p:outputLabel>
+								<p:selectBooleanCheckbox value="#{userMgntBean.user.isLockedBool}" />
+								
+								<p:outputLabel id="lblRole" value="Role"></p:outputLabel>
+			                   	<p:selectOneMenu id="dropdownRole" value="#{userMgntBean.user.role}" converter="roleConverter" var="role">
+						            <f:selectItems value="#{userMgntBean.roles}" var="role" itemLabel="#{role.displayName}" itemValue="#{role}" />
+						 
+						            <p:column>
+						                <p:outputLabel value="#{role.displayName}" />
+						            </p:column>
+						        </p:selectOneMenu>
+					                   	
+						        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+						        <p:calendar id="calEffectiveDate" value="#{userMgntBean.user.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+						        	<f:convertDateTime pattern="MM/dd/yyyy" />
+						        </p:calendar>
+							                    	
+								<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+						        <p:calendar id="calExpirationDate" value="#{userMgntBean.user.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+						        	<f:convertDateTime pattern="MM/dd/yyyy" />
+						        </p:calendar>
+						        		            
+				             </h:panelGrid>
+						</p:tab>
+					
+						<p:tab title="Assign Groups">
+							<p:pickList id="groupList" value="#{userMgntBean.groups}" var="group" 
+						                itemValue="#{group}" itemLabel="#{group.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{group.name}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:tab>	
+					</p:tabView>
+					
+					<p:commandButton value="Save" actionListener="#{userMgntBean.updateUser()}" icon="ui-icon-disk" process="pnlUserList" update="messages">
+					</p:commandButton>					
+			    </pe:masterDetailLevel>
+			</pe:masterDetail>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

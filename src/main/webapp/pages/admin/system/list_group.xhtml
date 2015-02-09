@@ -1,0 +1,112 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Manage Custom Fields</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:outputScript library="js" name="group.js" target="head" />
+ 		
+		<h:form id="formGroupMgnt">
+			
+			<pe:masterDetail id="pnlGroupList" selectLevelListener="#{listGroupLevelListener.handleNavigation}" showAllBreadcrumbItems="true" level="1">
+				<f:facet name="header">
+			        <p:messages id="messages" showDetail="true" closable="true" showSummary="false" />
+			    </f:facet>
+			    
+			    <pe:masterDetailLevel level="1">
+			        <f:facet name="label">
+			            <h:outputFormat value="Group List"/>
+			        </f:facet>
+			        
+			        <p:dataTable id="groupTable" var="group" value="#{groupMgntBean.groups}" widgetVar="groupVar">
+				       	<p:column headerText="Name" style="width:20%">
+				       		<p:commandLink value="#{group.name}" actionListener="#{groupMgntBean.showGroup(group)}">
+			                    <pe:selectDetailLevel contextValue="#{group}" />
+			                </p:commandLink>
+			          	</p:column>
+				 
+						<p:column headerText="Description">
+				        	<h:outputText value="#{group.description}" />
+				       	</p:column>
+				       	
+				       	<p:column headerText="Active" style="width:5%" styleClass="alignCenter">
+							<h:outputText value="#{group.isActive eq 'Y' ? 'Yes' : 'No'}" />
+				       	</p:column>
+				       	
+				       	<p:column headerText="Effective Date" width="15%" styleClass="alignCenter">
+							<h:outputText value="#{group.effectiveDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>
+				       	</p:column>
+				       	
+				       	<p:column headerText="Expiration Date" width="15%" styleClass="alignCenter">
+							<h:outputText value="#{group.expirationDate}">
+				            	<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>
+				       	</p:column>
+					</p:dataTable>
+			    </pe:masterDetailLevel>
+			    
+			    <pe:masterDetailLevel level="2" contextVar="group" levelLabel="Group Detail">
+			    	<p:tabView widgetVar="tabGroup" styleClass="marginTab" activeIndex="0" id="tabGroupDetail">
+						<p:tab title="Primary">
+				             <h:panelGrid columns="2">
+								<p:outputLabel id="lblName" for="txtName" value="Name" />
+								<p:inputText id="txtName" required="true" value="#{groupMgntBean.group.name}">
+									<f:validateLength minimum="3" maximum="45" />
+								</p:inputText>
+									
+								<p:outputLabel id="lblDescription" for="txtDescription" value="Description" />
+								<p:inputText id="txtDescription" required="true" value="#{groupMgntBean.group.description}">
+									<f:validateLength minimum="3" maximum="45" />
+								</p:inputText>
+			
+								<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+								<p:selectBooleanCheckbox value="#{groupMgntBean.group.isActiveBool}" />
+								
+								<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+			                   	<p:selectOneMenu id="dropdownOwner" value="#{groupMgntBean.group.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p">
+						            <f:selectItems value="#{groupMgntBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+						 
+						            <p:column>
+						                <p:outputLabel value="#{p.displayName}" />
+						            </p:column>
+						        </p:selectOneMenu>
+					                   	
+						        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+						        <p:calendar id="calEffectiveDate" value="#{groupMgntBean.group.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+						        	<f:convertDateTime pattern="MM/dd/yyyy" />
+						        </p:calendar>
+							                    	
+								<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+						        <p:calendar id="calExpirationDate" value="#{groupMgntBean.group.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+						        	<f:convertDateTime pattern="MM/dd/yyyy" />
+						        </p:calendar>
+						        		            
+				             </h:panelGrid>
+						</p:tab>
+					
+						<p:tab title="Assign Users">
+							<p:pickList id="userList" value="#{groupMgntBean.users}" var="user" 
+						                itemValue="#{user}" itemLabel="#{user.displayName}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="userConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{user.displayName}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:tab>	
+					</p:tabView>
+					
+					<p:commandButton value="Save" actionListener="#{groupMgntBean.updateGroup(1)}" icon="ui-icon-disk" process="pnlGroupList" update="messages">
+					</p:commandButton>					
+			    </pe:masterDetailLevel>
+			</pe:masterDetail>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

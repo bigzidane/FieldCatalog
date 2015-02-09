@@ -1,0 +1,39 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Event</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:form id="formEventMgnt">
+ 			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+	           <p:panel header="Add A New Event">
+	           		<f:facet name="actions">
+			            <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"><h:outputText styleClass="ui-icon ui-icon-help" /></h:commandLink>
+			        </f:facet>
+	             <h:panelGrid columns="2">
+	             	<p:outputLabel id="lblTarget" for="dropdownTarget" value="Target" />
+					<p:selectOneMenu id="dropdownTarget" 
+						value="#{eventMgntBean.event.target}" required="true">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{eventMgntBean.targets}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel id="lblName" for="txtName" value="Name" />
+					<p:inputText id="txtName" required="true" value="#{eventMgntBean.event.name}">
+						<pe:keyFilter regEx="/[a-z_]/i"/>
+						<f:validateRegex pattern="^[a-zA-Z]+$" />
+					</p:inputText>
+						
+					<f:facet name="footer">
+		                <p:commandButton id="btnAdd" value="Add" action="#{eventMgntBean.addEvent}" update="formEventMgnt"></p:commandButton>
+		            </f:facet>
+	             </h:panelGrid>
+	         </p:panel>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

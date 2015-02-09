@@ -1,0 +1,170 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Screen</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="screen.js" target="head" />
+		<h:outputStylesheet library="primefaces-extensions" name="codemirror/mode/tiki.css" />
+		
+		<h:form  id="formScreen" enctype="multipart/form-data">
+			<p:panel id="pnlScreen" header="Add A New Screen">
+               	<f:facet name="actions">
+	                <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" title="Help">
+	                	<h:outputText styleClass="ui-icon ui-icon-help" />
+	                </h:commandLink>
+		        </f:facet>
+               	<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+               	<p:tabView widgetVar="tabScreen" styleClass="marginTab">
+					<p:tab title="Primary">
+				        <h:panelGrid columns="2">
+							<p:outputLabel id="outTxtNameId" for="screenName" value="Name" name="outTxtNameNm"></p:outputLabel>
+							<p:inputText id="screenName" required="true" value="#{screenBean.screen.name}">
+								<f:validateLength minimum="3" maximum="45" />
+							</p:inputText>
+		                       
+		                    <p:outputLabel id="outTxtDescriptionId" for="screenDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+		                    <p:inputText id="screenDescription" required="true" value="#{screenBean.screen.description}">
+		                       	<f:validateLength minimum="3" maximum="45" />
+		                    </p:inputText>
+		                    
+		                    <p:outputLabel for="product" value="Product" />
+				            <p:selectOneMenu id="product" value="#{screenBean.product}" converter="productConverter" required="true">
+				                <p:ajax listener="#{screenBean.onProductChange}" update="version" />
+				                <f:selectItem itemLabel="Select Product" itemValue="" noSelectionOption="true"  />
+				                <f:selectItems value="#{screenBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product}"/>
+				            </p:selectOneMenu>  
+				            
+				            <p:outputLabel for="version" value="Version" />
+				            <p:selectOneMenu id="version" value="#{screenBean.productVersion}" converter="productVersionConverter"  required="true">
+				            	<p:ajax listener="#{screenBean.onProductVersionChange}" update="dropdownParentScreen" />
+				                <f:selectItem itemLabel="Select Version" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{screenBean.productVersions}" var="productVersion" itemLabel="#{productVersion.name}" itemValue="#{productVersion}"/>
+				            </p:selectOneMenu>                      
+		                   
+		                   	<p:outputLabel id="lblParent" value="Parent Screen"></p:outputLabel>				        
+					        <p:selectCheckboxMenu id="dropdownParentScreen" value="#{screenBean.selectedParentScreens}" converter="screenConverter" label="Select Parents" 
+					                              filter="true" filterMatchMode="startsWith">
+					            <f:selectItems value="#{screenBean.screens}" var="screen" itemLabel="#{screen.name}" itemValue="#{screen}" />
+					        </p:selectCheckboxMenu>
+					        
+		                   	<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+		                   	<p:selectBooleanCheckbox value="#{screenBean.screen.isActiveBool}" />
+		                   				        
+		                   	<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+		                   	<p:selectOneMenu id="dropdownOwner" value="#{screenBean.screen.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith">
+					            <f:selectItems value="#{screenBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+					        </p:selectOneMenu>
+					        
+					        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+					        <p:calendar id="calEffectiveDate" value="#{screenBean.screen.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						                    	
+							<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+					        <p:calendar id="calExpirationDate" value="#{screenBean.screen.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>			                 
+					        
+					        <p:outputLabel id="outTxtFileId" for="attachedFile" value="Image"></p:outputLabel>
+	                        <p:fileUpload id="attachedFile" value="#{screenBean.attachedFile}" mode="simple" skinSimple="true" 
+	                        	allowTypes="/(\.|\/)(gif|jpe?g|png)$/" sizeLimit="102400"/>
+	    
+				        </h:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Business Rule">
+				        <p:panelGrid styleClass="permissionPanel">
+						    <p:row>
+						        <p:column styleClass="vAlignTop textBold" >
+						    		   <p:outputLabel value="Business Rule"></p:outputLabel>
+						    	</p:column>
+						    	
+						    	<p:column styleClass="vAlignTop textBold">
+						    		   <p:outputLabel value="Psedo Code"></p:outputLabel> 	
+						        </p:column>
+					        </p:row>
+					        
+					        <p:row>	
+					        	<p:column styleClass="vAlignTop" >
+					        		<p:editor widgetVar="editorBusinessRuleWidget" id="editorBusinessRule" value="#{screenBean.screen.businessRule}">
+					        		</p:editor>
+					        	</p:column>
+					        	
+					        	<p:column styleClass="vAlignTop" >
+					        		<pe:codeMirror id="codeMirror" mode="javascript" value="#{screenBean.screen.codeRule}" theme="eclipse" lineNumbers="true" >
+					        		</pe:codeMirror>  
+					        	</p:column>
+					        </p:row>
+					    </p:panelGrid>
+				    </p:tab>
+				    
+					<p:tab title="Event" rendered="#{screenBean.eventsAvailable}">
+				        <p:tabView binding="#{screenBean.tabEvents}">
+				        </p:tabView>
+				    </p:tab>
+				    
+				    <p:tab title="Message">
+						<p:panelGrid columns="1" style="width:100%" styleClass="permissionPanel">
+							<p:pickList id="viewMessageList" value="#{screenBean.messages}" var="message" 
+						                itemValue="#{message}" itemLabel="#{message.code}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="messageConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{message.code}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Permission">
+						<p:panelGrid columns="2" style="width:100%" styleClass="permissionPanel">
+			        		<p:outputLabel id="lblViewGroup" value="View-Only Group" styleClass="textBold"></p:outputLabel>
+			        		<p:outputLabel id="lblDesignGroup" value="Design Group" styleClass="textBold"></p:outputLabel>
+							<p:pickList id="viewGroupList" value="#{screenBean.viewGroup}" var="viewGroup" 
+						                itemValue="#{viewGroup}" itemLabel="#{viewGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{viewGroup.name}" />
+						        </p:column>
+			  				</p:pickList>
+	  						<p:pickList id="designGroupList" value="#{screenBean.designGroup}" var="designGroup" 
+						                itemValue="#{designGroup}" itemLabel="#{designGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{designGroup.name}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Advance">
+						<p:outputLabel value="Tags" for="tagId" />
+				        <p:autoComplete id="tagId" multiple="true" value="#{screenBean.screen.screenTags}" completeMethod="#{screenBean.completeTag}" widgetVar="tagList"
+				                        var="tag" itemLabel="#{tag.name}" itemValue="#{tag}" converter="tagConverter" forceSelection="false">
+				            <p:column>
+				                <h:outputText value="#{tag.name}" />
+				            </p:column>
+				            <p:ajax event="query" global="false"></p:ajax>
+				        </p:autoComplete>
+					</p:tab>
+					
+					<p:tab title="Custom Fields" rendered="#{screenBean.custFieldAvailable}">
+						<h:panelGrid columns="2" binding="#{screenBean.custFieldGroup}">
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+				
+				<p:commandButton id="btnAddScreen" value="Save" action="#{screenBean.addScreen}" ajax="false" icon="ui-icon-disk" update="formScreen" oncomplete="if (!args.validationFailed) { onSaveScreenCompletion(); }"/>
+				
+		    </p:panel>			                
+       	</h:form>
+	</ui:define> 
+</ui:composition>

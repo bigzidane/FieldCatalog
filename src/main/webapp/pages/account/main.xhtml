@@ -1,0 +1,66 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Search</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:form  id="formSearch">
+			<p:breadCrumb style="margin-bottom:10px;" styleClass="textBold">
+    			<p:menuitem value="Search" url="/pages/account/main.xhtml" />
+    			<p:menuitem value="Search" url="#" />
+    		</p:breadCrumb>
+    		
+    		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+    		
+			<h:panelGrid border="0" columns="1">
+				<f:facet name="header">
+					<h:panelGrid border="0" columns="3" columnClasses="alignLeft,alignLeft,alignLeft">
+						<p:outputLabel value="Search in"></p:outputLabel>
+						
+						<p:selectOneMenu value="#{searchBean.searchIn}">
+							<f:selectItem itemLabel="" itemValue="" noSelectionOption="true"  />
+							<f:selectItem itemLabel="Product" itemValue="Product"  />
+				            <f:selectItem itemLabel="Screen" itemValue="Screen"  />    
+							<f:selectItem itemLabel="Field" itemValue="Field"  />
+						</p:selectOneMenu>
+						
+						<p:commandButton id="btnSearch" value="Search" icon="ui-icon-search" 
+										action="#{searchBean.search}" 
+										update="searchScreenResult"/>
+						
+						<p:outputLabel value="Search for"></p:outputLabel>				
+						<p:inputText id="searchFor" value="#{searchBean.searchFor}" placeholder="Enter a keyword"/>
+						
+					</h:panelGrid>
+				</f:facet>
+				
+				<p:dataTable id="searchScreenResult" value="#{searchBean.searchResultList.searchResults}" var="searchResult" widgetVar="searchTable"
+	    				rows="10" paginator="true" 
+	    				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="10,50,100" paginatorPosition="bottom">
+					<p:column headerText="Name">
+		                <p:commandLink value="#{searchResult.name}" action="#{searchBean.showDetail(searchResult,'0')}"/>
+		            </p:column>
+		            
+		            <p:column headerText="Description">
+		                <h:outputText value="#{searchResult.description}"/>
+		            </p:column>
+		            
+		            <p:column headerText="Type" width="5%">
+		                <h:outputText value="#{searchResult.type}"/>
+		            </p:column>
+		            
+		            <p:column headerText="View" width="5%">
+		            	<p:commandLink value="Image" action="#{searchBean.showDetail(searchResult,'1')}" rendered="#{searchResult.type eq 'Screen'}"/>
+		            	<h:outputText value="N/A" rendered="#{searchResult.type ne 'Screen'}"/>
+		            </p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

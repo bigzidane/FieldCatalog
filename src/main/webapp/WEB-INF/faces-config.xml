@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright (c) 2015, ItServicesDepot.com All rights reserved. 
+	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. 
+	
+	Please contact ItServicesDepot.com or NghiaDo (dothanhtrongnghia@yahoo.com) 
+	if you need	additional information or have any questions. 
+-->
+
+<!-- This file contains all JSF & PrimeFaces configuration/navigation for Field Catalog application -->
+
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+	<application>
+    	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+    	
+		<resource-bundle>
+			<base-name>resources</base-name>
+			<var>res</var>
+	   </resource-bundle>
+	</application>
+
+	<factory>
+	  <exception-handler-factory>
+	    org.primefaces.extensions.component.ajaxerrorhandler.AjaxExceptionHandlerFactory
+	  </exception-handler-factory>
+	</factory>
+	
+	<!-- navigation-rule for Login page -->
+	<navigation-rule>
+        <!-- navigation-case for method login() -->
+        <navigation-case>
+            <from-outcome>successToMainPage</from-outcome>            
+            <to-view-id>/pages/account/main.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{loginBean.login}</from-action>
+            <from-outcome>errorToLoginPage</from-outcome>            
+            <to-view-id>/pages/unsecure/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <!-- navigation-rule for Product List page -->
+    <navigation-rule>
+	    <from-view-id>/pages/account/product/list_product.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToProductDetailPage</from-outcome>
+	        <to-view-id>/pages/account/product/edit_product.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listProductBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToProductMapPage</from-outcome>
+	        <to-view-id>/pages/account/product/product_map.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listProductBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToScreensPage</from-outcome>
+	        <to-view-id>/pages/account/screen/list_screen.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listProductBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+
+    <!-- navigation-rule for Edit Product page -->	
+    <navigation-rule>
+        <from-view-id>/pages/account/edit_product.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>productList</from-outcome>            
+            <to-view-id>/pages/account/product/list_product.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{productBean.update}</from-action>
+            <from-outcome>success</from-outcome>            
+            <to-view-id>/pages/account/product/list_product.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+        <from-view-id>/pages/product/add_product_version.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>successToProductsPage</from-outcome>            
+            <to-view-id>/pages/account/product/list_product.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+	</navigation-rule>
+	
+    <!-- navigation-rule for Edit Product page -->	
+    <navigation-rule>
+        <from-view-id>/pages/admin/system/list_group.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{productBean.updateGroup}</from-action>
+            <from-outcome>success</from-outcome>            
+            <to-view-id>/pages/admin/system/list_group.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+	</navigation-rule>
+	
+    <!-- navigation-rule for Screen List page -->
+    <navigation-rule>
+	    <from-view-id>/pages/account/screen/list_screen.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToScreenDetailPage</from-outcome>
+	        <to-view-id>/pages/account/screen/edit_screen.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listScreenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToImagePage</from-outcome>
+	        <to-view-id>/pages/account/screen/add_fields_screen.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listScreenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToFieldsPage</from-outcome>
+	        <to-view-id>/pages/account/field/list_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listScreenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToScreenMap</from-outcome>
+	        <to-view-id>/pages/account/screen/screen_map.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listScreenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- navigation-rule for Field List page -->
+    <navigation-rule>
+	    <from-view-id>/pages/account/field/list_field.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToFieldDetailPage</from-outcome>
+	        <to-view-id>/pages/account/field/edit_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listFieldBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+	    <from-view-id>/pages/account/main.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToViewScreenPage</from-outcome>
+	        <to-view-id>/pages/account/screen/edit_screen.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{searchBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToViewFieldPage</from-outcome>
+	        <to-view-id>/pages/account/field/edit_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{searchBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToImagePage</from-outcome>
+	        <to-view-id>/pages/account/screen/add_fields_screen.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{searchBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+	    <from-view-id>/pages/account/tag_trend.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToSearchPage</from-outcome>
+	        <to-view-id>/pages/account/main.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{searchTagBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+	    <from-view-id>/pages/*</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToSearchPage</from-outcome>
+	        <to-view-id>/pages/account/main.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{sessionMgntBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+	    <from-view-id>/pages/account/edit_screen.xhtml</from-view-id>
+	    <navigation-case>
+	        <from-outcome>successToViewFieldsPage</from-outcome>
+	        <to-view-id>/pages/account/list_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{screenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	</navigation-rule>
+</faces-config>

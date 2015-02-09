@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+
+<html xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:ui='http://java.sun.com/jsf/facelets'
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h='http://java.sun.com/jsf/html'
+      xmlns:p='http://primefaces.org/ui'>
+   <h:body>   
+     <ui:composition>
+        <h:form>
+        	<p:menubar>
+        		<p:menuitem value="Home" icon="ui-icon-home" url="/pages/account/main.xhtml"/>
+        		<p:submenu label="Tool" icon="ui-icon-link">
+        			<p:menuitem value="Tag View" icon="ui-icon-tag" url="/pages/account/tag_trend.xhtml"/>
+        		</p:submenu>
+        		
+        		<p:submenu label="Product" icon="ui-icon-document">
+		            <p:menuitem value="New" icon="ui-icon-newwin" url="/pages/admin/product/add_product.xhtml" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>
+		            <p:menuitem value="New Version" icon="ui-icon-folder-copy" url="/pages/account/product/add_product_version.xhtml" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>
+		            		                
+		            <p:separator />
+		            <p:menuitem value="Manage" icon="ui-icon-search" url="/pages/account/product/list_product.xhtml" />
+		        </p:submenu>
+		        
+		        <p:submenu label="Screen" icon="ui-icon-image">
+		            <p:menuitem value="New" icon="ui-icon-newwin" url="/pages/admin/screen/add_screen.xhtml" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>
+		            <p:separator />
+		            <p:menuitem value="Manage" icon="ui-icon-search" url="/pages/account/screen/list_screen.xhtml" />
+		        </p:submenu>
+		 
+		        <p:submenu label="Field" icon="ui-icon-contact">
+		            <p:menuitem value="New" icon="ui-icon-newwin" url="/pages/admin/field/add_field.xhtml" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>
+		            <p:separator />
+		            <p:menuitem value="Manage" icon="ui-icon-search" url="/pages/account/field/list_field.xhtml" />
+		        </p:submenu>
+		        
+		        <p:submenu label="Admin" icon="ui-icon-pencil" rendered="#{sessionMgntBean.hasSufficientRoles('role_admin')}">
+		        	<p:submenu label="User">
+		        		<p:menuitem value="Add ..." icon="ui-icon-plus" url="/pages/admin/system/add_user.xhtml"/>
+		        		<p:menuitem value="Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_user.xhtml"/>
+		        	</p:submenu>
+		        	<p:submenu label="Custom Field">
+		        		<p:menuitem value="Add ..." icon="ui-icon-plus" url="/pages/admin/system/add_cust_field.xhtml"/>
+		        		<p:menuitem value="Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_cust_field.xhtml"/>
+		        	</p:submenu>
+		        	<p:submenu label="Event">
+		        		<p:menuitem value="Add ..." icon="ui-icon-plus" url="/pages/admin/system/add_event.xhtml"/>
+		        		<p:menuitem value="Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_event.xhtml"/>
+		        	</p:submenu>
+		        	<p:submenu label="Message">
+		        		<p:menuitem value="Add ..." icon="ui-icon-plus" url="/pages/admin/system/add_message.xhtml"/>
+		        		<p:menuitem value="Lite Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_message_lite.xhtml"/>
+		        		<p:menuitem value="Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_message.xhtml"/>
+		        	</p:submenu>
+		        	<p:submenu label="Group">
+		        		<p:menuitem value="Add ..." icon="ui-icon-plus" url="/pages/admin/system/add_group.xhtml"/>
+		        		<p:menuitem value="Lite Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_group_lite.xhtml"/>
+		        		<p:menuitem value="Manage ..." icon="ui-icon-bookmark" url="/pages/admin/system/list_group.xhtml"/>
+		        	</p:submenu>
+		        </p:submenu>
+		 
+		        <p:submenu label="Help" icon="ui-icon-help">
+		            <p:menuitem value="Contents" url="#" />
+		            <p:separator />
+		            <p:menuitem value="Search" icon="ui-icon-search" url="#"/>
+		        </p:submenu>
+		 		        
+		        <f:facet name="options">
+		        	<p:remoteCommand name="globalSearch" action="#{sessionMgntBean.globalSearch}"/>
+		            <p:inputText style="margin-right:10px" placeholder="Search" value="#{sessionMgntBean.searchFor}" onkeypress="if (event.keyCode == 13) { globalSearch(); return false; }"/>
+		            <p:button value="Sign out" href="#{request.contextPath}/j_spring_security_logout"></p:button>
+		        </f:facet>
+		    </p:menubar>
+        </h:form>
+     </ui:composition>   
+   </h:body>
+</html>

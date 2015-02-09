@@ -1,0 +1,50 @@
+<!-- This is a template for all admin pages  -->
+
+<!DOCTYPE html>
+
+<html xmlns='http://www.w3.org/1999/xhtml'
+	 xmlns:ui='http://java.sun.com/jsf/facelets'
+	 xmlns:h='http://java.sun.com/jsf/html'
+	 xmlns:p='http://primefaces.org/ui'
+	 xmlns:pe="http://primefaces.org/ui/extensions"
+	 xmlns:f='http://java.sun.com/jsf/core'>
+
+	<f:loadBundle basename="resources" var="res"/>
+	
+	<h:head>
+		<title>Field Catalog - <ui:insert name="title"></ui:insert></title>
+		<h:outputStylesheet library="css" name="fieldcatalog-default.css"></h:outputStylesheet>
+	</h:head>
+
+	<h:body>
+		<div id='divTop' style="margin-bottom:20px">
+			<ui:insert name='divTop'>
+				<ui:include src='top.xhtml' />
+			</ui:insert>
+		</div>
+		
+		<div id='divProgressBar'>
+			<ui:insert name="progressDialog">
+				<p:dialog width="140" id="statusDialogId" modal="true" widgetVar="statusDialog" draggable="false" closable="false" showHeader="false" resizable="false">  
+					<h:panelGrid style="text-align:center;height:50px" columns="2">
+					 	<p:graphicImage library="images" name="loading.gif" />	
+						<h:panelGroup layout='block' styleClass="loading-label">
+							 <h:outputLabel styleClass="textBold" value="Please wait ..."/>
+						</h:panelGroup>
+				 	</h:panelGrid>  
+				</p:dialog>
+			</ui:insert>
+		</div>
+		
+		<div id='divMain'>
+			
+			<ui:insert name='divMain' />
+		</div>
+		
+		<div id='divBottom'>
+			<ui:insert name='divBottom'>
+				<ui:include src='bottom.xhtml' />
+			</ui:insert>
+		</div>
+	</h:body>
+</html>

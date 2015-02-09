@@ -1,0 +1,30 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Close Product</ui:define>
+
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+			
+		<h:form id="formProduct">
+			<p:panel id="pnlProduct" header="Close A Product">
+				<h:panelGrid columns="2" rendered="#{sessionMgntBean.hasCurrentProductVersion}">
+					<p:outputLabel value="Current Product" />
+					<p:outputLabel value="#{sessionMgntBean.currentProductName}" />
+					
+					<p:outputLabel value="Current Version" />
+					<p:outputLabel value="#{sessionMgntBean.currentProductVersionName}" />
+				</h:panelGrid>
+				
+				<p:outputLabel value="There is no opened Product." rendered="#{!sessionMgntBean.hasCurrentProductVersion}"></p:outputLabel>
+				<p:commandButton id="btnOpen" value="Close" action="#{listProductBean.closeProduct}" icon="ui-icon-close" rendered="#{sessionMgntBean.hasCurrentProductVersion}"/>
+				
+			</p:panel>
+		</h:form>
+	</ui:define> 
+</ui:composition>

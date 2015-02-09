@@ -1,0 +1,84 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Users</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:outputScript library="js" name="user.js" target="head" />
+ 		
+ 		<h:form id="formUserMgnt">
+ 			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+	           <p:panel header="Add A New User">
+	           		<f:facet name="actions">
+			            <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"><h:outputText styleClass="ui-icon ui-icon-help" /></h:commandLink>
+			        </f:facet>
+			        <p:tabView widgetVar="tabUser" styleClass="marginTab">
+					<p:tab title="Primary">
+			             <h:panelGrid columns="2">
+							<p:outputLabel id="lblName" for="txtName" value="E-Mail" />
+							<p:inputText id="txtName" required="true" value="#{userMgntBean.user.email}">
+								<f:validateLength minimum="3" maximum="45" />
+								<f:validator binding="#{userValidator}" />
+								<f:validator validatorId="emailValidator" />
+							</p:inputText>
+								
+							<p:outputLabel id="lblPassword1" for="txtPassword1" value="Password" />
+							<p:password id="txtPassword1" value="#{userMgntBean.user.password}" match="txtPassword2" required="true" />
+ 
+        					<p:outputLabel id="lblPassword2" for="txtPassword2" value="Confirm Password" />
+        					<p:password id="txtPassword2" value="#{userMgntBean.user.password}" required="true" />
+        
+							<p:outputLabel id="lblFirstName" for="txtFirstName" value="First Name" />
+							<p:inputText id="txtFirstName" required="true" value="#{userMgntBean.user.firstName}"/>
+							
+							<p:outputLabel id="lblLastName" for="txtLastName" value="Last Name" />
+							<p:inputText id="txtLastName" required="true" value="#{userMgntBean.user.lastName}"/>
+		
+							<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+							<p:selectBooleanCheckbox value="#{userMgntBean.user.isActiveBool}" />
+							
+							<p:outputLabel id="lblRole" value="Role"></p:outputLabel>
+		                   	<p:selectOneMenu id="dropdownOwner" value="#{userMgntBean.user.role}" var="r" converter="roleConverter">
+					            <f:selectItems value="#{userMgntBean.roles}" var="role" itemLabel="#{role.displayName}" itemValue="#{role}" />
+					 
+					            <p:column>
+					                <p:outputLabel value="#{r.displayName}" />
+					            </p:column>
+					        </p:selectOneMenu>
+				                   	
+					        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+					        <p:calendar id="calEffectiveDate" value="#{userMgntBean.user.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						                    	
+							<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+					        <p:calendar id="calExpirationDate" value="#{userMgntBean.user.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+					        		            
+			             </h:panelGrid>
+					</p:tab>
+				
+					<p:tab title="Assign Group">
+						<p:pickList id="groupList" value="#{userMgntBean.groups}" var="group" 
+					                itemValue="#{group}" itemLabel="#{group.name}" showCheckbox="true"
+					                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+					 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{group.name}" />
+					        </p:column>
+    					</p:pickList>
+					</p:tab>	
+				</p:tabView>
+				
+				<p:commandButton id="btnSave" value="Save" action="#{userMgntBean.addUser}" update="formUserMgnt" oncomplete="if (!args.validationFailed) { onSaveUserCompletion(); }"></p:commandButton>
+				
+	         </p:panel>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

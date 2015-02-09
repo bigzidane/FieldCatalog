@@ -1,0 +1,55 @@
+<ui:composition template="/pages/template/unsecure_layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Login</ui:define>
+
+    <ui:define name='divMain'>			
+		<h:form  id="formLogin">
+			<p:panelGrid styleClass="loginPanel">
+			    <p:row>
+			        <p:column rowspan="2" >
+			        	<p:graphicImage library="images" name="login_left_logo.jpg" />
+			        </p:column>
+			        
+			        <p:column styleClass="vAlignTop">
+			        	<p:panel id="pnlLogin" header="Member Login" styleClass="fullWidth" widgetVar="panelLogin">
+			               	<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			               	
+					        <h:panelGrid columns="2" styleClass="fullWidth">
+					            <p:outputLabel id="outTxtUserNameId" for="userName" value="${res['login.userName']}"></p:outputLabel>
+			                    <p:inputText id="userName" required="true" value="#{loginBean.userName}" styleClass="textWidthLong"></p:inputText>
+			                    
+			                    <p:outputLabel id="outLblPasswordId" for="password" value="Password:"></p:outputLabel>
+			                    <p:password id="password"  required="true" value="#{loginBean.password}" styleClass="textWidthLong"></p:password>                        
+			                   
+			                   	<f:facet name="footer">
+					                <p:commandButton id="btnLoginId" value="Login" action="#{loginBean.login}" update="pnlLogin"></p:commandButton>
+					            </f:facet>
+					        </h:panelGrid>
+					        
+					        <f:facet name="options">
+					            <p:menu>
+					                <p:submenu label="Help">
+					                    <p:menuitem value="Forgot your password" url="#" icon="ui-icon-newwin" onclick="PF('panelLogin').toggle()" />
+					                    <p:menuitem value="Contact us" url="#" icon="ui-icon-newwin" onclick="PF('panelLogin').close()" />
+					                </p:submenu>
+					            </p:menu>
+					        </f:facet>
+					    </p:panel>				    				            
+			        </p:column>
+			    </p:row>
+			 
+			    <p:row>
+			        <p:column>
+						<p:outputLabel id="outTxtSignupId" value="Don't have an account? " name="outTxtUserNameNm"></p:outputLabel>	
+						<p:link id="btnSignUpId" value="Sign Up" href="signup.xhtml"></p:link>
+			        </p:column>
+			    </p:row>
+	        </p:panelGrid>
+       	</h:form>
+	</ui:define>
+</ui:composition>

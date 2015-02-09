@@ -1,0 +1,80 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Manage Events</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<p:breadCrumb style="margin-bottom:10px;" styleClass="textBold">
+   			<p:menuitem value="Home" url="/pages/admin/main.xhtml" />
+   			<p:menuitem value="Event List" url="#" />
+   		</p:breadCrumb>
+   		
+ 		<h:form id="formEventMgnt">
+ 			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+ 			
+		 	<p:wizard flowListener="#{eventMgntBean.onFlowProcess}">		 		
+		        <p:tab id="Target" title="Target">
+		            <p:panel>
+		                <h:panelGrid columns="2">
+		                    <p:outputLabel id="outTargetId" for="dropdownTarget" value="Target"/>
+		 
+		                    <p:selectOneMenu id="dropdownTarget" value="#{eventMgntBean.target}" required="true">
+		                    	<f:selectItem itemLabel="Select One" itemValue="" />
+					            <f:selectItems value="#{eventMgntBean.targets}" />
+							</p:selectOneMenu>
+		                </h:panelGrid>
+		            </p:panel>
+		        </p:tab>
+		        
+		        <p:tab id="Event" title="Event">
+		        	<p:panel>
+		                <p:dataTable id="eventTable" var="event" value="#{eventMgntBean.events}" editable="true" widgetVar="eventVar">
+				 
+							<p:ajax event="rowEdit" listener="#{eventMgntBean.updateEvent}" update=":formEventMgnt:messages" />
+					 		
+					       	<p:column headerText="Name">
+				            	<p:cellEditor>
+				                	<f:facet name="output"><h:outputText value="#{event.name}" /></f:facet>
+				                	<f:facet name="input"><h:outputText value="#{event.name}" /></f:facet>
+				              	</p:cellEditor>
+				          	</p:column>
+
+							<p:column headerText="Display Order" style="width:10%">
+					        	<p:cellEditor>
+					               <f:facet name="output"><h:outputText value="#{event.order}" /></f:facet>
+					               <f:facet name="input">
+					               		<p:selectOneMenu id="dropdownOrders" value="#{event.order}" style="width:100%">
+		                    				<f:selectItems value="#{eventMgntBean.eventDisplayOrders}"></f:selectItems>
+		                    			</p:selectOneMenu>
+					               </f:facet>
+								</p:cellEditor>
+					       	</p:column>
+					       						 
+					       	<p:column style="width:32px">
+					       		<f:facet name="header">Update</f:facet>
+								<p:rowEditor />
+					       </p:column>
+					       
+					       <p:column style="width:32px">
+					       		<f:facet name="header">Delete</f:facet>
+					        	<p:commandButton process="@this" id="btnDelete"  action="#{eventMgntBean.deleteEvent(event)}" 
+					        		update="eventTable" icon="ui-icon-close" title="Remove">
+					        		<p:confirm header="Confirmation" message="Are you sure to remove this event?" icon="ui-icon-alert" />
+								</p:commandButton>
+					       </p:column>
+						</p:dataTable>
+		            </p:panel>
+		        </p:tab>
+		    </p:wizard>
+		    
+		    <p:confirmDialog global="true">
+		        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		    </p:confirmDialog>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

@@ -1,0 +1,108 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Product</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+					
+		<h:form  id="formProduct">
+			<p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();" oncomplete="statusDialog.hide();"/>
+			<p:panel id="pnlProduct" header="Add A New Product">
+               	<f:facet name="actions">
+	                <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" title="Help">
+	                	<h:outputText styleClass="ui-icon ui-icon-help" />
+	                </h:commandLink>
+		        </f:facet>
+               	<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+               	<p:tabView widgetVar="tabProduct" styleClass="marginTab">
+					<p:tab title="Primary">
+				        <h:panelGrid columns="2">
+				            <p:outputLabel id="outTxtNameId" for="productName" value="Name" name="outTxtNameNm"></p:outputLabel>
+		                       <p:inputText id="productName" required="true" value="#{productBean.productVersion.product.name}">
+									<f:validateLength minimum="3" maximum="45" />
+									<f:validator binding="#{productValidator}"></f:validator>
+		                       </p:inputText>
+		                       
+		                       <p:outputLabel id="outTxtDescriptionId" for="productDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+		                       <p:inputText id="productDescription" required="true" value="#{productBean.productVersion.product.description}">
+		                       	<f:validateLength minimum="3" maximum="45" />
+		                       </p:inputText>                        
+		                   
+		                   	<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+		                   	<p:selectBooleanCheckbox value="#{productBean.productVersion.product.isActiveBool}" />
+		                   	
+		                   	<p:outputLabel id="lblVersion" value="Baseline Version" for="version"></p:outputLabel>
+		                   	<p:inputMask id="version" value="#{productBean.productVersion.name}" mask="99.99.999" required="true"/>
+		                   	
+		                   	<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+		                   	<p:selectOneMenu id="dropdownOwner" value="#{productBean.productVersion.product.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p">
+					            <f:selectItems value="#{productBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+					 
+					            <p:column>
+					                <p:outputLabel value="#{p.displayName}" />
+					            </p:column>
+					        </p:selectOneMenu>
+					        
+					        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+					        <p:calendar id="calEffectiveDate" value="#{productBean.productVersion.product.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						                    	
+							<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+					        <p:calendar id="calExpirationDate" value="#{productBean.productVersion.product.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>			                 
+				        </h:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Permission">
+						<p:panelGrid columns="2" style="width:100%" styleClass="permissionPanel">
+			        		<p:outputLabel id="lblViewGroup" value="View-Only Group" styleClass="textBold"></p:outputLabel>
+			        		<p:outputLabel id="lblDesignGroup" value="Design Group" styleClass="textBold"></p:outputLabel>
+							<p:pickList id="viewGroupList" value="#{productBean.viewGroup}" var="viewGroup" 
+						                itemValue="#{viewGroup}" itemLabel="#{viewGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{viewGroup.name}" />
+						        </p:column>
+			  				</p:pickList>
+	  						<p:pickList id="designGroupList" value="#{productBean.designGroup}" var="designGroup" 
+						                itemValue="#{designGroup}" itemLabel="#{designGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{designGroup.name}" />
+						        </p:column>
+			  				</p:pickList>\
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Advance">
+						<p:outputLabel value="Tags" for="tagId" />
+				        <p:autoComplete id="tagId" multiple="true" value="#{productBean.productVersion.product.productTags}" completeMethod="#{productBean.completeTag}" widgetVar="tagList"
+				                        var="tag" itemLabel="#{tag.name}" itemValue="#{tag}" converter="tagConverter" forceSelection="false">
+				            <p:column>
+				                <h:outputText value="#{tag.name}" />
+				            </p:column>
+				            <p:ajax event="query" global="false"></p:ajax>
+				        </p:autoComplete>
+					</p:tab>
+					
+					<p:tab title="Custom Fields" rendered="#{productBean.custFieldAvailable}">
+						<h:panelGrid columns="2" binding="#{productBean.custFieldGroup}">
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+				
+				<p:commandButton id="btnAddProduct" value="Save" action="#{productBean.addProduct}" icon="ui-icon-disk" update="formProduct" oncomplete="if (!args.validationFailed) { onSaveProductCompletion(); }"/>
+				
+		    </p:panel>			                
+       	</h:form>
+	</ui:define> 
+</ui:composition>

@@ -1,0 +1,99 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Manage Message</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<p:breadCrumb style="margin-bottom:10px;" styleClass="textBold">
+   			<p:menuitem value="Home" url="/pages/admin/main.xhtml" />
+   			<p:menuitem value="Message List" url="#" />
+   		</p:breadCrumb>
+    		
+ 		<h:form id="formMessageMgnt">
+ 			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+ 			
+               <p:dataTable id="messageTable" var="message" value="#{messageMgntBean.messages}" editable="true" widgetVar="messageVar">
+	 
+				<p:ajax event="rowEdit" listener="#{messageMgntBean.updateMessage}" update=":formMessageMgnt:messages" />
+		 		
+		       	<p:column headerText="Name" style="width:20%">
+	            	<p:cellEditor>
+	                	<f:facet name="output"><h:outputText value="#{message.code}" /></f:facet>
+	                	<f:facet name="input"><p:inputText value="#{message.code}" style="width:96%"/></f:facet>
+	              	</p:cellEditor>
+	          	</p:column>
+		 
+				<p:column headerText="Content">
+		        	<p:cellEditor>
+		               <f:facet name="output"><h:outputText value="#{message.description}" /></f:facet>
+		               <f:facet name="input"><p:inputText value="#{message.description}" style="width:96%" label="Label"/></f:facet>
+					</p:cellEditor>
+		       	</p:column>
+		       	
+		       	<p:column headerText="Active" style="width:5%">
+		        	<p:cellEditor>
+		               <f:facet name="output"><h:outputText value="#{message.isActive eq 'Y' ? 'Yes' : 'No'}" /></f:facet>
+		               <f:facet name="input">
+		               		<p:selectOneMenu id="dropdownRequired" value="#{message.isActive}" style="width:100%">
+                   				<f:selectItem itemLabel="Yes" itemValue="Y" />
+                   				<f:selectItem itemLabel="No" itemValue="N" />
+                   			</p:selectOneMenu>
+		               </f:facet>
+					</p:cellEditor>
+		       	</p:column>
+		       	
+		       	<p:column headerText="Effective Date" width="15%">
+		        	<p:cellEditor>
+		               <f:facet name="output">
+							<h:outputText value="#{message.effectiveDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>
+						</f:facet>
+		               <f:facet name="input">
+			               	<p:calendar style="width:96%" id="calEffectiveDate" value="#{message.effectiveDate}" pattern="MM/dd/yyyy" mask="true">
+				        		<f:convertDateTime pattern="MM/dd/yyyy" />
+				        	</p:calendar>
+		               </f:facet>
+					</p:cellEditor>
+		       	</p:column>
+		       	
+		       	<p:column headerText="Expiration Date" width="15%">
+		        	<p:cellEditor>
+		               <f:facet name="output">
+		               		<h:outputText value="#{message.expirationDate}">
+		               			<f:convertDateTime pattern="MM/dd/yyyy" />
+		               		</h:outputText>
+						</f:facet>
+		               <f:facet name="input">
+			               	<p:calendar style="width:96%" id="calExpirationDate" value="#{message.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+				        		<f:convertDateTime pattern="MM/dd/yyyy" />
+				        	</p:calendar>
+		               </f:facet>
+					</p:cellEditor>
+		       	</p:column>
+		       	
+		       	<p:column style="width:32px">
+		       		<f:facet name="header">Update</f:facet>
+					<p:rowEditor />
+		       </p:column>
+		       
+		       <p:column style="width:32px">
+		       		<f:facet name="header">Delete</f:facet>
+		        	<p:commandButton process="@this" id="btnDelete"  action="#{messageMgntBean.deleteMessage(message)}" 
+		        		update="messageTable" icon="ui-icon-close" title="Remove">
+		        		<p:confirm header="Confirmation" message="Are you sure to remove this message?" icon="ui-icon-alert" />
+					</p:commandButton>
+		       </p:column>
+			</p:dataTable>
+		    
+		    <p:confirmDialog global="true">
+		        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		    </p:confirmDialog>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

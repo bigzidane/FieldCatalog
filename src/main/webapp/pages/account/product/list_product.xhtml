@@ -1,0 +1,91 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Product List</ui:define>
+
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+			
+		<h:form id="formProductList">	
+			<p:toolbar style="margin-bottom:10px;" >
+        		<f:facet name="left">
+        			<h:panelGroup>
+                		<h:outputText value="Search: " />
+                		<p:inputText id="searchFilter" widgetVar="searchFilterVar" style="width:150px" placeholder="Enter keyword" onkeyup="onSearchFilter(this)"/>
+            		</h:panelGroup>
+        			
+		        </f:facet>
+ 
+        		<f:facet name="right">
+        			<p:selectOneMenu id="productFilter" onchange="onProductChange(this)">
+		                <f:selectItem itemLabel="Select Product" itemValue=""/>
+		                <f:selectItems value="#{listProductBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product.id}"/>
+		            </p:selectOneMenu>
+		            
+		            <span class="ui-separator"/>
+		            
+		            <p:selectOneMenu id="productVersionFilter" onchange="onProductVersionChange(this)">
+		            	<f:selectItem itemLabel="Select Version" itemValue="" />
+		                <f:selectItems value="#{listProductBean.allProductVersions}" var="pv" itemLabel="#{pv.name}" itemValue="#{pv.name}"/>
+		            </p:selectOneMenu>
+				</f:facet>
+			</p:toolbar>
+			
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+				        			
+	    	<p:dataTable id="dtProductList" value="#{listProductBean.productVersions}" var="productVersion" widgetVar="productsTable" 
+	    				rows="10" paginator="true" 
+	    				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="10,50,100" paginatorPosition="bottom">
+	    		<f:facet name="header">
+	    			<p:outputPanel >
+	    				<p:inputText id="globalFilter" onkeyup="PF('productsTable').filter()" widgetVar="globalFilterVar"/>
+	    			</p:outputPanel>
+	    		</f:facet>
+
+	            <p:column headerText="Name" width="10%" filterBy="#{productVersion.product.name}" filterMatchMode="contains" filterStyleClass="hide" id="nameFilter">
+	                <p:commandLink value="#{productVersion.product.name}" action="#{listProductBean.showProduct(productVersion)}" ajax="false"/>
+	            </p:column>
+	            
+	            <p:column headerText="Version" width="8%" filterBy="#{productVersion.name}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter" id="versionFilter">
+	                <h:outputText value="#{productVersion.name}"/>
+	            </p:column>
+	            
+	            <p:column headerText="View" width="2%" styleClass="alignCenter">
+	                <p:commandLink value="Map" action="#{listProductBean.showProductMap(productVersion)}" ajax="false"/>
+	            </p:column>
+	            
+	            <p:column headerText="Description" filterBy="#{productVersion.product.description}" filterMatchMode="contains" filterStyleClass="hide">
+	                <h:outputText value="#{productVersion.product.description}"/>
+	            </p:column>
+	            
+	            <p:column headerText="Screen Count" width="8%">
+	                <p:commandLink value="#{productVersion.screensCount}" action="#{listProductBean.showScreens(productVersion)}"/>
+	            </p:column>
+	            
+	            <p:column headerText="Active" width="5%" filterBy="#{productVersion.product.isActive}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{productVersion.product.isActive eq 'Y' ? 'Yes' : 'No'}"/>
+	            </p:column>
+	            <p:column headerText="Effective Date" width="8%" filterBy="#{productVersion.product.effectiveDate}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{productVersion.product.effectiveDate}">
+	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Expiration Date" width="8%" filterBy="#{productVersion.product.expirationDate}" filterMatchMode="contains" filterStyleClass="hide" styleClass="alignCenter">
+	                <h:outputText value="#{productVersion.product.expirationDate}">
+	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Owner" width="10%" filterBy="#{productVersion.product.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
+	                <h:outputText value="#{productVersion.product.owner.displayName}">
+	                </h:outputText>
+	            </p:column>
+	        </p:dataTable>
+		</h:form>
+	</ui:define> 
+</ui:composition>

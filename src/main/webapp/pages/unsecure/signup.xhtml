@@ -1,0 +1,75 @@
+<ui:composition template="/pages/template/unsecure_layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Signup</ui:define>
+
+    <ui:define name='divMain'>			
+		<h:form  id="formSignup">
+			<p:panelGrid styleClass="loginPanel">
+			    <p:row>
+			        <p:column rowspan="2">
+			        	<p:graphicImage library="images" name="signup_left_logo.jpg" />
+			        </p:column>
+			        
+			        <p:column styleClass="vAlignTop">
+			        	<p:panel id="pnlSignup" header="Signup" styleClass="fullWidth" widgetVar="panelLogin">
+			               	<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			               	
+					        <h:panelGrid columns="2" styleClass="fullWidth">
+					            <p:outputLabel value="Email" for="userName"></p:outputLabel>
+			                    <p:inputText id="userName" required="true" value="#{signupBean.user.email}" styleClass="textWidthLong">
+			                    	<f:validator binding="#{userValidator}" />
+			                    	<f:validator validatorId="emailValidator" />
+			                    </p:inputText>
+			                    
+			                    <p:outputLabel id="outLblPasswordId1" for="txtPassword1" value="Password:"></p:outputLabel>
+			                    <p:password id="txtPassword1" match="txtPassword2" required="true" value="#{signupBean.user.password}" styleClass="textWidthLong"></p:password>
+			                    
+			                    <p:outputLabel id="outLblPasswordId2" for="txtPassword2" value="Confirm Password:"></p:outputLabel>
+			                    <p:password id="txtPassword2" required="true" value="#{signupBean.user.password}" styleClass="textWidthLong"></p:password>
+			                   
+			                   	<p:outputLabel value="First Name" for="firstName"></p:outputLabel>
+			                    <p:inputText id="firstName" required="true" value="#{signupBean.user.firstName}" styleClass="textWidthLong"></p:inputText>
+			                    
+			                    <p:outputLabel value="Last Name" for="lastName"></p:outputLabel>
+			                    <p:inputText id="lastName" required="true" value="#{signupBean.user.lastName}" styleClass="textWidthLong"></p:inputText>
+			                    
+			                    <p:outputLabel value="Phone" for="phone"></p:outputLabel>
+			                    <p:inputMask id="phone" required="true" value="#{signupBean.user.phone}" styleClass="textWidthLong" mask="(999) 999-9999? x99999"/>
+			                    
+			                    <p:outputLabel value="Company" for="company"></p:outputLabel>
+			                    <p:inputText id="company" required="true" value="#{signupBean.user.company}" styleClass="textWidthLong"></p:inputText>
+			                    
+			                    <p:outputLabel value="Employees" for="employees"></p:outputLabel>
+			                    <p:selectOneMenu id="employees" value="#{signupBean.user.employees}">
+						            <f:selectItem itemLabel="Select One" itemValue="" />
+						            <f:selectItem itemLabel="1-5 employees" itemValue="1" />
+						            <f:selectItem itemLabel="6-20 employees" itemValue="6" />
+						            <f:selectItem itemLabel="21-100 employees" itemValue="21" />
+						            <f:selectItem itemLabel="101-500 employees" itemValue="101" />
+						            <f:selectItem itemLabel="501-3,500 employees" itemValue="501" />
+						            <f:selectItem itemLabel="3,500+ employees" itemValue="3500" />
+					        	</p:selectOneMenu>
+			                    
+			                   	<f:facet name="footer">
+					                <p:commandButton id="btnSignupId" value="Signup" action="#{signupBean.signup}" update="pnlSignup"></p:commandButton>
+					            </f:facet>
+					        </h:panelGrid>
+					   </p:panel>				    				            
+			        </p:column>
+			    </p:row>
+			    
+			    <p:row>
+			        <p:column>
+						<p:outputLabel value="Return to Login screen. Click "></p:outputLabel>	
+						<p:link id="btnLoginId" value="Login" href="login.xhtml"></p:link>
+			        </p:column>
+			    </p:row>
+	        </p:panelGrid>
+       	</h:form>
+	</ui:define>
+</ui:composition>

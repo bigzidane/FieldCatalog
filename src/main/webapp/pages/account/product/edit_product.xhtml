@@ -1,0 +1,111 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Modify Product</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="product.js" target="head" />
+			
+		<h:form  id="formProduct">
+			
+			<p:breadCrumb styleClass="marginTab">
+    			<p:menuitem value="Home" url="/pages/account/main.xhtml" />
+    			<p:menuitem value="Product List" url="/pages/account/product/list_product.xhtml" />
+    			<p:menuitem value="Product Detail" url="#"/>
+    		</p:breadCrumb>
+    		
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			
+			<p:tabView widgetVar="tabProduct" id="tabproductId" styleClass="marginTab">
+				<p:tab title="Primary">
+			        <h:panelGrid columns="2">					        	
+			        	<p:outputLabel id="lblID" value="Id" for="Id"></p:outputLabel>
+                   		<p:inputText id="Id" value="#{productBean.productVersion.product.id}"  readonly="true"/>
+                   		
+			            <p:outputLabel id="outTxtNameId" for="productName" value="Name" name="outTxtNameNm"></p:outputLabel>
+                       	<p:inputText id="productName" required="true" value="#{productBean.productVersion.product.name}"  readonly="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+                       		<f:validateLength minimum="3" maximum="45" />
+                       	</p:inputText>
+                       
+                       	<p:outputLabel id="outTxtDescriptionId" for="productDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+                       	<p:inputText id="productDescription" required="true" value="#{productBean.productVersion.product.description}" readonly="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+                       		<f:validateLength minimum="3" maximum="45" />
+                       	</p:inputText>                        
+	                   
+	                   	<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+	                   	<p:selectBooleanCheckbox value="#{productBean.productVersion.product.isActiveBool}"  disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}"/>
+	                   	
+	                   	<p:outputLabel id="lblVersion" value="Baseline Version" for="version"></p:outputLabel>
+                   		<p:inputText id="version" value="#{productBean.productVersion.name}" readonly="true" />
+	                   	
+	                   	<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+	                   	<p:selectOneMenu id="dropdownOwner" value="#{productBean.productVersion.product.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				            <f:selectItems value="#{listProductBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+				 
+				            <p:column>
+				                <p:outputLabel value="#{p.displayName}" />
+				            </p:column>
+				        </p:selectOneMenu>
+				        
+				        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+				        <p:calendar id="calEffectiveDate" value="#{productBean.productVersion.product.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>
+					                    	
+						<p:outputLabel id="lblExpirationDate" value="Expiration Date" for="calExpirationDate"></p:outputLabel>
+				        <p:calendar id="calExpirationDate" value="#{productBean.productVersion.product.expirationDate}" pattern="MM/dd/yyyy" mask="true" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>		
+			        </h:panelGrid>
+				</p:tab>
+				
+				<p:tab title="Permission">
+					<p:panelGrid columns="2" style="width:100%" styleClass="permissionPanel">
+		        		<p:outputLabel id="lblViewGroup" value="View-Only Group" styleClass="textBold"></p:outputLabel>
+						<p:outputLabel id="lblDesignGroup" value="Design Group" styleClass="textBold"></p:outputLabel>
+						
+						<p:pickList id="viewGroupList" value="#{productBean.viewGroup}" var="viewGroup" 
+				                itemValue="#{viewGroup}" itemLabel="#{viewGroup.name}" showCheckbox="true"
+				                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter"  disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{viewGroup.name}" />
+					        </p:column>
+		  				</p:pickList>
+					        		
+						
+		  				<p:pickList id="designGroupList" value="#{productBean.designGroup}" var="designGroup" 
+				                itemValue="#{designGroup}" itemLabel="#{designGroup.name}" showCheckbox="true"
+				                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter"  disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}" >
+							 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{designGroup.name}" />
+					        </p:column>
+				        </p:pickList>
+					</p:panelGrid>
+				</p:tab>
+				
+				<p:tab title="Advance">
+					<p:outputLabel value="Tags" for="tagId" />
+			        <p:autoComplete id="tagId" multiple="true" value="#{productBean.productVersion.product.productTags}" completeMethod="#{productBean.completeTagEdit}" widgetVar="tagList"
+			                        var="tag" itemLabel="#{tag.name}" itemValue="#{tag}" converter="tagConverter" forceSelection="false" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+			            <p:column>
+			                <h:outputText value="#{tag.name}" />
+			            </p:column>
+			        </p:autoComplete>	
+				</p:tab>
+				
+				<p:tab title="Custom Fields" rendered="#{productBean.productVersion.product.custFieldAvailable}">
+					<h:panelGrid columns="2" binding="#{productBean.custFieldGroup}">
+					</h:panelGrid>
+				</p:tab>
+			</p:tabView>			                
+			
+			<p:commandButton value="Save" action="#{productBean.update(productBean.productVersion.product)}" icon="ui-icon-disk" update="formProduct" oncomplete="if (!args.validationFailed) { onSaveProductCompletion(); }"  rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>  
+       	</h:form>
+	</ui:define> 
+</ui:composition>

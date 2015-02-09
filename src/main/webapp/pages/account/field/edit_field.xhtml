@@ -1,0 +1,180 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Modify Field</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="field.js" target="head" />
+			
+		<h:form  id="formField">
+			
+			<p:breadCrumb styleClass="marginTab">
+    			<p:menuitem value="Home" url="/pages/account/main.xhtml" />
+    			<p:menuitem value="Field List" url="/pages/account/field/list_field.xhtml" />
+    			<p:menuitem value="Field Detail" url="#"/>
+    		</p:breadCrumb>
+    		
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			
+			<p:tabView widgetVar="tabField" id="tabfieldId" styleClass="marginTab">
+				<p:tab title="Primary">
+			        <h:panelGrid columns="2">					        	
+			        	<p:outputLabel id="lblID" value="Id" for="Id"></p:outputLabel>
+                   		<p:inputText id="Id" value="#{fieldBean.field.id}"  readonly="true"/>
+                   		
+			            <p:outputLabel id="outTxtNameId" for="fieldName" value="Name" name="outTxtNameNm"></p:outputLabel>
+                       	<p:inputText id="fieldName" required="true" value="#{fieldBean.field.name}" readonly="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+                       		<f:validateLength minimum="3" maximum="45" />
+                       	</p:inputText>
+                       
+                       <p:outputLabel id="outTxtDescriptionId" for="fieldDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+                       <p:inputText id="fieldDescription" required="true" value="#{fieldBean.field.description}" readonly="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+                       		<f:validateLength minimum="3" maximum="45" />
+                       </p:inputText>
+                       
+                       <p:outputLabel for="product" value="Product" />
+			           <p:inputText id="product" value="#{fieldBean.field.screen.productVersion.product.name}"  readonly="true"/>
+			            
+			            <p:outputLabel for="productVersion" value="Product Version" />
+			            <p:inputText id="productVersion" value="#{fieldBean.field.screen.productVersion.name}"  readonly="true"/>
+			            			            
+			            <p:outputLabel for="screen" value="Screen" />
+			            <p:inputText id="screen" value="#{fieldBean.field.screen.name}"  readonly="true"/>
+			            
+			            <p:outputLabel id="lblParent" value="Dependent Fields"></p:outputLabel>				        
+			            <p:outputPanel>
+					        <p:selectCheckboxMenu id="dropdownDependentFields" value="#{fieldBean.selectedDependentFields}" converter="fieldConverter" label="Select Fields" 
+					                              filter="true" filterMatchMode="startsWith">
+					            <f:selectItems value="#{fieldBean.dependentFields}" var="field" itemLabel="#{field.name}" itemValue="#{field}" />
+					        </p:selectCheckboxMenu>
+					        <p:commandButton title="View Navigation Map" icon="ui-icon-link" oncomplete="PF('dlgNavigationVar').show();" actionListener="#{fieldBean.buildNavigationMap}" update=":formField:dlgNavigation"/>
+				        </p:outputPanel>
+					    
+			            			            
+	                   	<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+	                   	<p:selectBooleanCheckbox value="#{fieldBean.field.isActiveBool}" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}"/>
+	                   	
+	                   	<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+	                   	<p:selectOneMenu id="dropdownOwner" value="#{fieldBean.field.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				            <f:selectItems value="#{fieldBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+				 
+				            <p:column>
+				                <p:outputLabel value="#{p.displayName}" />
+				            </p:column>
+				        </p:selectOneMenu>
+				        
+				        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+				        <p:calendar id="calEffectiveDate" value="#{fieldBean.field.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>
+					                    	
+						<p:outputLabel id="lblExpirationDate" value="Expiration Date" for="calExpirationDate"></p:outputLabel>
+				        <p:calendar id="calExpirationDate" value="#{fieldBean.field.expirationDate}" pattern="MM/dd/yyyy" mask="true" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>		
+			        </h:panelGrid>
+				</p:tab>
+				
+				<p:tab title="Business Rule">
+			        <p:panelGrid styleClass="permissionPanel">
+					    <p:row>
+					        <p:column styleClass="vAlignTop textBold" >
+					    		   <p:outputLabel value="Business Rule"></p:outputLabel>
+					    	</p:column>
+					    	
+					    	<p:column styleClass="vAlignTop textBold">
+					    		   <p:outputLabel value="Psedo Code"></p:outputLabel> 	
+					        </p:column>
+				        </p:row>
+				        
+				        <p:row>	
+				        	<p:column styleClass="vAlignTop" >
+				        		<p:editor widgetVar="editorBusinessRuleWidget" id="editorBusinessRule" value="#{fieldBean.field.businessRule}" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				        		</p:editor>
+				        	</p:column>
+				        	
+				        	<p:column styleClass="vAlignTop" >
+				        		<pe:codeMirror id="codeMirror" mode="javascript" value="#{fieldBean.field.codeRule}" theme="eclipse" lineNumbers="true" >
+				        		</pe:codeMirror>  
+				        	</p:column>
+				        </p:row>
+				    </p:panelGrid>
+			    </p:tab>
+			    
+				<p:tab title="Event" rendered="#{fieldBean.eventsAvailable}">
+			        <p:tabView binding="#{fieldBean.tabEvents}">
+			        </p:tabView>
+			    </p:tab>
+				
+				<p:tab title="Message">
+					<p:panelGrid columns="1" style="width:100%" styleClass="permissionPanel">
+						<p:pickList id="viewMessageList" value="#{fieldBean.messages}" var="message" 
+					                itemValue="#{message}" itemLabel="#{message.code}" showCheckbox="true"
+					                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="messageConverter" itemDisabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+					 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{message.code}" />
+					        </p:column>
+		  				</p:pickList>
+					</p:panelGrid>
+				</p:tab>
+					
+				<p:tab title="Permission">
+					<p:panelGrid columns="2" style="width:100%" styleClass="permissionPanel">
+		        		<p:outputLabel id="lblViewGroup" value="View-Only Group" styleClass="textBold"></p:outputLabel>
+						<p:outputLabel id="lblDesignGroup" value="Design Group" styleClass="textBold"></p:outputLabel>
+						
+						<p:pickList id="viewGroupList" value="#{fieldBean.viewGroup}" var="viewGroup" 
+				                itemValue="#{viewGroup}" itemLabel="#{viewGroup.name}" showCheckbox="true"
+				                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" itemDisabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+				 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{viewGroup.name}" />
+					        </p:column>
+		  				</p:pickList>
+					        		
+						
+		  				<p:pickList id="designGroupList" value="#{fieldBean.designGroup}" var="designGroup" 
+				                itemValue="#{designGroup}" itemLabel="#{designGroup.name}" showCheckbox="true"
+				                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" itemDisabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+							 
+					        <p:column style="width:100%;">
+					            <h:outputText value="#{designGroup.name}" />
+					        </p:column>
+				        </p:pickList>
+					</p:panelGrid>
+				</p:tab>
+				
+				<p:tab title="Advance">
+					<p:outputLabel value="Tags" for="tagId" />
+			        <p:autoComplete id="tagId" multiple="true" value="#{fieldBean.field.fieldTags}" completeMethod="#{fieldBean.completeTagEdit}" widgetVar="tagList"
+			                        var="tag" itemLabel="#{tag.name}" itemValue="#{tag}" converter="tagConverter" forceSelection="false"  disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}">
+			            <p:column>
+			                <h:outputText value="#{tag.name}" />
+			            </p:column>
+			        </p:autoComplete>	
+				</p:tab>
+				
+				<p:tab title="Custom Fields" rendered="#{fieldBean.field.custFieldAvailable}">
+					<h:panelGrid columns="2" binding="#{fieldBean.custFieldGroup}">
+					</h:panelGrid>
+				</p:tab>
+			</p:tabView>			                
+			
+			<p:commandButton value="Save" action="#{fieldBean.update(fieldBean.field)}" icon="ui-icon-disk" update="formField" oncomplete="if (!args.validationFailed) { onSaveFieldCompletion(); }" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>
+			
+			<p:dialog header="Navigation Map" widgetVar="dlgNavigationVar" dynamic="true" id="dlgNavigation">
+			   <p:tree value="#{fieldBean.navigationRoot}" var="node" orientation="horizontal" styleClass="removeBorder">
+			        <p:treeNode>
+			            <h:outputText value="#{node}" />
+			        </p:treeNode>
+			    </p:tree>
+			</p:dialog>  
+       	</h:form>
+	</ui:define> 
+</ui:composition>

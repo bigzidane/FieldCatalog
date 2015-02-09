@@ -1,0 +1,144 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">View/Create/Assign Fields</ui:define>
+	 	
+	<ui:define name='divMain'>
+	<h:outputScript library="js" name="jquery/jquery.contextMenu.js" ></h:outputScript>		
+	
+	<h:outputScript library="js" name="jquery/phototagger.jquery.js" />
+	<h:outputScript library="js" name="image-annotation.js" />
+	<h:outputScript library="js" name="screenimage.js" />
+	<h:outputScript library="js" name="invert.js" />
+	
+	<h:outputStylesheet name="jquery.contextMenu.css" library="css" />
+	<h:outputStylesheet name="image-annotation.css" library="css"/>
+	<h:outputStylesheet name="main.css" library="css"/>
+		
+	<p:panel id="pnlScreen" header="#{'View/Create/Assign Fields - Screen: '} #{screenImageBean.screen.name}">
+		<f:facet name="actions">
+			<p:selectOneMenu id="fieldsFilter" onchange="changeField(this)" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+            	<f:selectItem itemLabel="Select Field" itemValue="" />
+            	<f:selectItems value="#{screenImageBean.fields}" var="field" itemLabel="#{field.name}" itemValue="#{field.id}"/>
+        	</p:selectOneMenu>
+        	
+        	<span class="ui-separator"/>
+        	
+			<p:selectOneMenu id="imageOptions" onchange="changeImage(this)" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+            	<f:selectItem itemLabel="Select View mode" itemValue="" />
+            	<f:selectItem itemLabel="Invert" itemValue="invert" />
+            	<f:selectItem itemLabel="Original" itemValue="original" />
+        	</p:selectOneMenu>
+        </f:facet>
+        <div id="imageContainer">
+			<img id="screenshotImage" src="#{screenImageBean.screenImagePath}"  name="${screenImageBean.screen.id}" alt="There is no screen-shot for this screen" border="1" />
+        </div>
+        
+        <p:dialog header="Create/Assign option" widgetVar="dlgCreateAssignFieldOption" minHeight="40" resizable="false" modal="true" onHide="onCreateAssignDlgHide();">
+		    <h:outputText value="Click 'Create' if you would like to create a new field or 'Assign' if you would like to link to an existing field" />
+		    
+		    <p:separator />
+		    <p:commandButton id="btnCreate" value="Create" onclick="createNewField()"></p:commandButton>
+		    <p:commandButton id="btnAssign" value="Assign" onclick="assignExistingField()"></p:commandButton>
+		</p:dialog>
+		
+		<p:dialog header="Create A New Field" widgetVar="dlgCreateField" minHeight="40" resizable="false" modal="true" onHide="onCreateAssignDlgHide();">
+			<h:form id="formCreateNew">
+				<p:messages id="msgAddField" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			    <p:tabView widgetVar="tabField" styleClass="marginTab">
+					<p:tab title="Primary">
+				        <h:panelGrid columns="2">
+							<p:outputLabel id="outTxtNameId" for="fieldName" value="Name" name="outTxtNameNm"></p:outputLabel>
+							<p:inputText id="fieldName" required="true" value="#{fieldLiteBean.field.name}">
+								<f:validateLength minimum="3" maximum="45" />
+								<f:validator binding="#{fieldValidator}"> </f:validator>
+							</p:inputText>
+		                       
+		                    <p:outputLabel id="outTxtDescriptionId" for="fieldDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+		                    <p:inputText id="fieldDescription" required="true" value="#{fieldLiteBean.field.description}">
+		                       	<f:validateLength minimum="3" maximum="45" />
+		                    </p:inputText>
+		                    
+	                   		<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+		                   	<p:selectOneMenu id="dropdownOwner" value="#{fieldLiteBean.field.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p">
+					            <f:selectItems value="#{fieldLiteBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+					 
+					            <p:column>
+					                <p:outputLabel value="#{p.displayName}" />
+					            </p:column>
+					        </p:selectOneMenu>
+					        
+	                   		<p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+					        <p:calendar id="calEffectiveDate" value="#{fieldLiteBean.field.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						                    	
+							<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+					        <p:calendar id="calExpirationDate" value="#{fieldLiteBean.field.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+				
+				<p:commandButton id="btnAddField" value="Create" 
+								action="#{fieldLiteBean.addField(screenImageBean.screen.id)}"
+								oncomplete="if (!args.validationFailed) { onSaveCreateFieldCompletion(xhr, status, args); }"/>
+								
+				<p:inputText  value="#{fieldLiteBean.field.tagInfo.leftTagPosition}" widgetVar="tagLeftPosition" style="display: none" />
+				<p:inputText  value="#{fieldLiteBean.field.tagInfo.topTagPosition}" widgetVar="tagTopPosition" style="display: none"/>
+				<p:inputText  value="#{fieldLiteBean.field.tagInfo.tagWidth}" widgetVar="tagWidth" style="display: none"/>
+				<p:inputText  value="#{fieldLiteBean.field.tagInfo.tagHeight}" widgetVar="tagHeight" style="display: none"/>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Assign An Existing Field" widgetVar="dlgAssignField" minHeight="40" resizable="false" modal="true" onHide="onCreateAssignDlgHide();">
+		    
+		    <h:form id="formAssign">
+				<p:messages id="msgAssignField" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+				
+				<p:selectOneListbox id="fieldList" value="#{fieldLiteBean.selectedField}" converter="fieldConverter" var="field" filter="true" filterMatchMode="contains" required="true">
+		            <f:selectItems value="#{fieldLiteBean.fields}" var="field" itemLabel="#{field.name}" itemValue="#{field}" />
+		 
+		            <p:column>
+		                <p:outputLabel value="#{field.name}"></p:outputLabel>
+		            </p:column>
+		            
+		            <p:column>
+		                <p:outputLabel value="#{field.description}"></p:outputLabel>
+		            </p:column>
+		        </p:selectOneListbox>
+			
+			    <p:commandButton id="btnAssignField" value="Assign" action="#{fieldLiteBean.assignField()}" icon="ui-icon-disk" 
+								oncomplete="if (!args.validationFailed) { onSaveAssignFieldCompletion(xhr, status, args); }"/>
+								
+				<p:inputText  value="#{fieldLiteBean.selectedField.tagInfo.leftTagPosition}" widgetVar="tagAssignLeftPosition" style="display: none" />
+				<p:inputText  value="#{fieldLiteBean.selectedField.tagInfo.topTagPosition}" widgetVar="tagAssignTopPosition" style="display: none"/>
+				<p:inputText  value="#{fieldLiteBean.selectedField.tagInfo.tagWidth}" widgetVar="tagAssignWidth" style="display: none"/>
+				<p:inputText  value="#{fieldLiteBean.selectedField.tagInfo.tagHeight}" widgetVar="tagAssignHeight" style="display: none"/>
+				
+			</h:form>
+		</p:dialog>
+					        
+        <div id="contextMenuContainer">
+			<ul id="screenshotContextMenu" class="contextMenu">
+			    <li class="drawContextMenu"><a href="#drawMode">Create/Assign</a></li>
+				<li class="editContextMenu"><a href="#editMode">Change to Edit mode</a></li>
+			</ul>
+			
+			<ul id="outlinerContextMenu" class="contextMenu">
+			    <li class="viewFieldContextMenu"><a href="#viewField">View</a></li>
+		        <li class="deleteOutlinerContextMenu"><a href="#removeFieldLink">Delete (Link Only)</a></li>
+		    </ul>
+		</div>
+		<span id="screenId" style="display: none;">#{screenImageBean.screen.id}</span>
+		<span style="display: none" id="requestContextPath">#{request.contextPath}</span>
+		<span style="display: none" id="hasSufficientRoles">#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}</span>
+	</p:panel>			                
+	</ui:define> 
+</ui:composition>

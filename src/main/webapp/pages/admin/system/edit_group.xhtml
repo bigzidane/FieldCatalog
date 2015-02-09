@@ -1,0 +1,78 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Groups</ui:define>
+ 	
+ 	<ui:define name='divMain'>
+ 		<h:outputScript library="js" name="group.js" target="head" />
+    		
+ 		<h:form id="formGroupMgnt">
+			<p:breadCrumb styleClass="marginTab">
+	  			<p:menuitem value="Home" url="/pages/admin/main.xhtml" />
+	  			<p:menuitem value="Group List" url="/pages/admin/system/list_group.xhtml" />
+	  			<p:menuitem value="Group Detail"/>
+	  		</p:breadCrumb>
+	  			
+		   <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+	        <p:tabView widgetVar="tabGroup" styleClass="marginTab">
+				<p:tab title="Primary">
+		             <h:panelGrid columns="2">
+						<p:outputLabel id="lblName" for="txtName" value="Name" />
+						<p:inputText id="txtName" required="true" value="#{groupMgntBean.group.name}">
+							<f:validateLength minimum="3" maximum="45" />
+							<f:validator binding="#{groupValidator}" />
+						</p:inputText>
+							
+						<p:outputLabel id="lblDescription" for="txtDescription" value="Description" />
+						<p:inputText id="txtDescription" required="true" value="#{groupMgntBean.group.description}">
+							<f:validateLength minimum="3" maximum="45" />
+						</p:inputText>
+	
+						<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+						<p:selectBooleanCheckbox value="#{groupMgntBean.group.isActiveBool}" />
+						
+						<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+	                   	<p:selectOneMenu id="dropdownOwner" value="#{groupMgntBean.group.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p">
+				            <f:selectItems value="#{groupMgntBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+				 
+				            <p:column>
+				                <p:outputLabel value="#{p.displayName}" />
+				            </p:column>
+				        </p:selectOneMenu>
+			                   	
+				        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+				        <p:calendar id="calEffectiveDate" value="#{groupMgntBean.group.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>
+					                    	
+						<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+				        <p:calendar id="calExpirationDate" value="#{groupMgntBean.group.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+				        	<f:convertDateTime pattern="MM/dd/yyyy" />
+				        </p:calendar>
+				        		            
+		             </h:panelGrid>
+				</p:tab>
+			
+				<p:tab title="Assign Users">
+					<p:pickList id="userList" value="#{groupMgntBean.users}" var="user" 
+				                itemValue="#{user}" itemLabel="#{user.displayName}" showCheckbox="true"
+				                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="userConverter" >
+				 
+				        <p:ajax event="transfer" listener="#{groupMgntBean.onTransfer}" global="false"/>
+				 
+				        <p:column style="width:100%;">
+				            <h:outputText value="#{user.displayName}" />
+				        </p:column>
+	  					</p:pickList>
+				</p:tab>	
+			</p:tabView>
+			
+			<p:commandButton id="btnSave" value="Save" action="#{groupMgntBean.updateGroup}" update="formGroupMgnt" oncomplete="if (!args.validationFailed) { onSaveGroupCompletion(); }"></p:commandButton>
+		</h:form>		   
+	</ui:define> 
+</ui:composition>

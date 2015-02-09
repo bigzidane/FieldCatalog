@@ -1,0 +1,176 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+ 
+ 	<ui:define name="title">Add Field</ui:define>
+	 	
+	<ui:define name='divMain'>
+		<h:outputScript library="js" name="field.js" target="head" />
+					
+		<h:form  id="formField">
+			<p:panel id="pnlField" header="Add A New Field">
+               	<f:facet name="actions">
+	                <h:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" title="Help">
+	                	<h:outputText styleClass="ui-icon ui-icon-help" />
+	                </h:commandLink>
+		        </f:facet>
+               	<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+               	<p:tabView widgetVar="tabField" styleClass="marginTab">
+					<p:tab title="Primary">
+				        <h:panelGrid columns="2">
+							<p:outputLabel id="outTxtNameId" for="fieldName" value="Name" name="outTxtNameNm"></p:outputLabel>
+							<p:inputText id="fieldName" required="true" value="#{fieldBean.field.name}">
+								<f:validateLength minimum="3" maximum="45" />
+								<f:validator binding="#{fieldValidator}"> </f:validator>
+							</p:inputText>
+		                       
+		                    <p:outputLabel id="outTxtDescriptionId" for="fieldDescription" value="Description" name="outTxtDescriptionNm"></p:outputLabel>
+		                    <p:inputText id="fieldDescription" required="true" value="#{fieldBean.field.description}">
+		                       	<f:validateLength minimum="3" maximum="45" />
+		                    </p:inputText>
+		                    
+		                    <p:outputLabel for="product" value="Product" />
+				            <p:selectOneMenu id="product" value="#{fieldBean.product}" converter="productConverter" required="true">
+				                <p:ajax listener="#{fieldBean.onProductChange}" update="productVersion" />
+				                <f:selectItem itemLabel="Select Product" itemValue="" noSelectionOption="true"  />
+				                <f:selectItems value="#{fieldBean.products}" var="product" itemLabel="#{product.name}" itemValue="#{product}"/>
+				            </p:selectOneMenu>  
+				            
+				            <p:outputLabel for="productVersion" value="Product Version" />
+				            <p:selectOneMenu id="productVersion" value="#{fieldBean.productVersion}" converter="productVersionConverter"  required="true">
+				            	<p:ajax listener="#{fieldBean.onProductVersionChange}" update="screen" />
+				                <f:selectItem itemLabel="Select Version" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{fieldBean.productVersions}" var="productVersion" itemLabel="#{productVersion.name}" itemValue="#{productVersion}"/>
+				            </p:selectOneMenu>                      
+				            
+				            <p:outputLabel for="screen" value="Screen" />
+				            <p:selectOneMenu id="screen" value="#{fieldBean.screen}" converter="screenConverter"  required="true">
+				            	<p:ajax listener="#{fieldBean.onScreenChange}" update="dropdownDependentFields" />
+				                <f:selectItem itemLabel="Select Screen" itemValue="" noSelectionOption="true" />
+				                <f:selectItems value="#{fieldBean.screens}" var="screen" itemLabel="#{screen.name}" itemValue="#{screen}"/>
+				            </p:selectOneMenu>
+				            
+				            <p:outputLabel id="lblParent" value="Dependent Fields"></p:outputLabel>				        
+					        <p:selectCheckboxMenu id="dropdownDependentFields" value="#{fieldBean.selectedDependentFields}" converter="fieldConverter" label="Select Fields" 
+					                              filter="true" filterMatchMode="startsWith">
+					            <f:selectItems value="#{fieldBean.dependentFields}" var="field" itemLabel="#{field.name}" itemValue="#{field}" />
+					        </p:selectCheckboxMenu>
+				            			            
+		                   	<p:outputLabel id="lblIsActive" value="Active"></p:outputLabel>
+		                   	<p:selectBooleanCheckbox value="#{fieldBean.field.isActiveBool}" />
+		                   	
+		                   	<p:outputLabel id="lblOwner" value="Owner"></p:outputLabel>
+		                   	<p:selectOneMenu id="dropdownOwner" value="#{fieldBean.field.owner}" converter="userConverter" filter="true" filterMatchMode="startsWith" var="p">
+					            <f:selectItems value="#{fieldBean.owners}" var="user" itemLabel="#{user.displayName}" itemValue="#{user}" />
+					 
+					            <p:column>
+					                <p:outputLabel value="#{p.displayName}" />
+					            </p:column>
+					        </p:selectOneMenu>
+					        
+					        <p:outputLabel id="lblEffectiveDate" value="Effective Date" for="calEffectiveDate"></p:outputLabel>
+					        <p:calendar id="calEffectiveDate" value="#{fieldBean.field.effectiveDate}" pattern="MM/dd/yyyy" mask="true" required="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>
+						                    	
+							<p:outputLabel id="lblExpirationDate" value="Effective Date" for="calExpirationDate"></p:outputLabel>
+					        <p:calendar id="calExpirationDate" value="#{fieldBean.field.expirationDate}" pattern="MM/dd/yyyy" mask="true">
+					        	<f:convertDateTime pattern="MM/dd/yyyy" />
+					        </p:calendar>			                 
+				        </h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Business Rule">
+				        <p:panelGrid styleClass="permissionPanel">
+						    <p:row>
+						        <p:column styleClass="vAlignTop textBold" >
+						    		   <p:outputLabel value="Business Rule"></p:outputLabel>
+						    	</p:column>
+						    	
+						    	<p:column styleClass="vAlignTop textBold">
+						    		   <p:outputLabel value="Psedo Code"></p:outputLabel> 	
+						        </p:column>
+					        </p:row>
+					        
+					        <p:row>	
+					        	<p:column styleClass="vAlignTop" >
+					        		<p:editor widgetVar="editorBusinessRuleWidget" id="editorBusinessRule" value="#{fieldBean.field.businessRule}">
+					        		</p:editor>
+					        	</p:column>
+					        	
+					        	<p:column styleClass="vAlignTop" >
+					        		<pe:codeMirror id="codeMirror" mode="javascript" value="#{fieldBean.field.codeRule}" theme="eclipse" lineNumbers="true" >
+					        		</pe:codeMirror>  
+					        	</p:column>
+					        </p:row>
+					    </p:panelGrid>
+				    </p:tab>
+				    
+					<p:tab title="Event" rendered="#{fieldBean.eventsAvailable}">
+				        <p:tabView binding="#{fieldBean.tabEvents}">
+				        </p:tabView>
+				    </p:tab>
+				    					
+					<p:tab title="Message">
+						<p:panelGrid columns="1" style="width:100%" styleClass="permissionPanel">
+							<p:pickList id="viewMessageList" value="#{fieldBean.messages}" var="message" 
+						                itemValue="#{message}" itemLabel="#{message.code}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="messageConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{message.code}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Permission">
+						<p:panelGrid columns="2" style="width:100%" styleClass="permissionPanel">
+			        		<p:outputLabel id="lblViewGroup" value="View-Only Group" styleClass="textBold"></p:outputLabel>
+			        		<p:outputLabel id="lblDesignGroup" value="Design Group" styleClass="textBold"></p:outputLabel>
+							<p:pickList id="viewGroupList" value="#{fieldBean.viewGroup}" var="viewGroup" 
+						                itemValue="#{viewGroup}" itemLabel="#{viewGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{viewGroup.name}" />
+						        </p:column>
+			  				</p:pickList>
+	  						<p:pickList id="designGroupList" value="#{fieldBean.designGroup}" var="designGroup" 
+						                itemValue="#{designGroup}" itemLabel="#{designGroup.name}" showCheckbox="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="groupConverter" >
+						 
+						        <p:column style="width:100%;">
+						            <h:outputText value="#{designGroup.name}" />
+						        </p:column>
+			  				</p:pickList>
+						</p:panelGrid>
+					</p:tab>
+					
+					<p:tab title="Advance">
+						<p:outputLabel value="Tags" for="tagId" />
+				        <p:autoComplete id="tagId" multiple="true" value="#{fieldBean.field.fieldTags}" completeMethod="#{fieldBean.completeTag}" widgetVar="tagList"
+				                        var="tag" itemLabel="#{tag.name}" itemValue="#{tag}" converter="tagConverter" forceSelection="false">
+				            <p:column>
+				                <h:outputText value="#{tag.name}" />
+				            </p:column>
+				            <p:ajax event="query" global="false"></p:ajax>
+				        </p:autoComplete>
+					</p:tab>
+					
+					<p:tab title="Custom Fields" rendered="#{fieldBean.custFieldAvailable}">
+						<h:panelGrid columns="2" binding="#{fieldBean.custFieldGroup}">
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+				
+				<p:commandButton id="btnAddField" value="Save" action="#{fieldBean.addField}" icon="ui-icon-disk" update="formField" oncomplete="if (!args.validationFailed) { onSaveFieldCompletion(); }"/>
+				
+		    </p:panel>			                
+       	</h:form>
+	</ui:define> 
+</ui:composition>
