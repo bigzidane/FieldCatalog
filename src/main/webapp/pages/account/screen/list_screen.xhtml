@@ -24,7 +24,7 @@
         		<f:facet name="right">
         			<p:selectOneMenu id="screenFilter" onchange="onScreenChange(this)">
 		                <f:selectItem itemLabel="Select Screen" itemValue=""/>
-		                <f:selectItems value="#{listScreenBean.screens}" var="screen" itemLabel="#{screen.name}" itemValue="#{screen.id}"/>
+		                <f:selectItems value="#{listScreenBean.allScreens}" var="screen" itemLabel="#{screen.name}" itemValue="#{screen.id}"/>
 		            </p:selectOneMenu>
 		            
 		            <span class="ui-separator"/>
@@ -95,9 +95,12 @@
 	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
 	                </h:outputText>
 	            </p:column>
-	            <p:column headerText="Owner" width="8%"  filterBy="#{screen.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
+	            <p:column headerText="Owner" width="7%"  filterBy="#{screen.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
 	                <h:outputText value="#{screen.owner.displayName}">
 	                </h:outputText>
+	            </p:column>
+	            <p:column width="1%">
+	             	<p:commandLink value="+" action="#{listScreenBean.showAddDocument(screen)}" title="Add Documents" style="text-decoration:none;" /> 
 	            </p:column>
 	        </p:dataTable>
 		</h:form>

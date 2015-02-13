@@ -16,6 +16,7 @@ package com.itservicesdepot.constant;
 */
 
 public class ApplicationConstant {
+	public static String SYS_ADMIN = "sysadmin@";
 	public static String YES_INDICATOR = "Y";
 	public static String YES_STRING_INDICATOR = "yes";
 	public static String TRUE_INDICATOR = "true";

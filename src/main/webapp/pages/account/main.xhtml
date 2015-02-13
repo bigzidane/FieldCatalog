@@ -27,6 +27,7 @@
 							<f:selectItem itemLabel="Product" itemValue="Product"  />
 				            <f:selectItem itemLabel="Screen" itemValue="Screen"  />    
 							<f:selectItem itemLabel="Field" itemValue="Field"  />
+							<f:selectItem itemLabel="Document" itemValue="Document"  />
 						</p:selectOneMenu>
 						
 						<p:commandButton id="btnSearch" value="Search" icon="ui-icon-search" 
@@ -44,7 +45,11 @@
 	    				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         rowsPerPageTemplate="10,50,100" paginatorPosition="bottom">
 					<p:column headerText="Name">
-		                <p:commandLink value="#{searchResult.name}" action="#{searchBean.showDetail(searchResult,'0')}"/>
+		                <p:commandLink value="#{searchResult.name}" action="#{searchBean.showDetail(searchResult,'0')}" rendered="#{searchResult.type ne 'Document'}"/>
+		                
+		                <p:commandLink value="#{searchResult.name}" ajax="false" actionListener="#{searchBean.setSelectedSearchResult(searchResult)}" rendered="#{searchResult.type eq 'Document'}">
+				            	<p:fileDownload value="#{searchBean.fileDownload}" />
+				        </p:commandLink>
 		            </p:column>
 		            
 		            <p:column headerText="Description">
@@ -57,7 +62,6 @@
 		            
 		            <p:column headerText="View" width="5%">
 		            	<p:commandLink value="Image" action="#{searchBean.showDetail(searchResult,'1')}" rendered="#{searchResult.type eq 'Screen'}"/>
-		            	<h:outputText value="N/A" rendered="#{searchResult.type ne 'Screen'}"/>
 		            </p:column>
 				</p:dataTable>
 			</h:panelGrid>

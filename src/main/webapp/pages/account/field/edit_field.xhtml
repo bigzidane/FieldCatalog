@@ -164,6 +164,19 @@
 					<h:panelGrid columns="2" binding="#{fieldBean.custFieldGroup}">
 					</h:panelGrid>
 				</p:tab>
+				
+				<p:tab title="Document" rendered="#{fieldBean.field.documentAvailable}">
+					<p:dataTable id="documentDataTable" var="document" value="#{fieldBean.field.fieldDocuments}">
+				        <p:column headerText="Name" styleClass="alignLeft">
+				            <p:commandLink value="#{document.name}" ajax="false" actionListener="#{fieldBean.setSelectedDocument(document)}">
+				            	<p:fileDownload value="#{fieldBean.fileDownload}" />
+				            </p:commandLink>
+				        </p:column>
+				        <p:column headerText="Size" styleClass="alignLeft">
+				        	<p:outputLabel value="#{document.sizeDisplay}"></p:outputLabel>
+				        </p:column>
+				    </p:dataTable>
+				</p:tab>
 			</p:tabView>			                
 			
 			<p:commandButton value="Save" action="#{fieldBean.update(fieldBean.field)}" icon="ui-icon-disk" update="formField" oncomplete="if (!args.validationFailed) { onSaveFieldCompletion(); }" rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>

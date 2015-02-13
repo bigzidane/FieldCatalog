@@ -19,6 +19,7 @@ import com.itservicesdepot.dao.ProductDAO;
 import com.itservicesdepot.dao.VersionDAO;
 import com.itservicesdepot.model.Product;
 import com.itservicesdepot.model.Result;
+import com.itservicesdepot.utils.ValidateUtils;
 
 @Service("productService")
 @Transactional(readOnly = true)
@@ -56,7 +57,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public List<Product> searchByKeyword(String keyword) throws Exception {
-    	return productDAO.searchByKeyword(keyword);
+    	if (ValidateUtils.isObjectEmpty(keyword)) {
+    		return productDAO.getProducts();
+    	}
+    	else {
+    		return productDAO.searchByKeyword(keyword);
+    	}
     }
     
 	public ProductDAO getProductDAO() {

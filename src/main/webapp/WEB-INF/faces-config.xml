@@ -42,6 +42,7 @@
             <to-view-id>/pages/unsecure/login.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+    
 
     <!-- navigation-rule for Product List page -->
     <navigation-rule>
@@ -75,6 +76,21 @@
 	            <view-param>
 	                <name>id</name>
 	                <value>#{listProductBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToAddDocumentPage</from-outcome>
+	        <to-view-id>/pages/account/add_documents.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listProductBean.paramId}</value>
+	            </view-param>
+	            <view-param>
+	                <name>type</name>
+	                <value>p</value>
 	            </view-param>
 	        </redirect>
 	    </navigation-case>
@@ -162,6 +178,21 @@
 	            </view-param>
 	        </redirect>
 	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToAddDocumentPage</from-outcome>
+	        <to-view-id>/pages/account/add_documents.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listScreenBean.paramId}</value>
+	            </view-param>
+	            <view-param>
+	                <name>type</name>
+	                <value>s</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
 	</navigation-rule>
 	
 	<!-- navigation-rule for Field List page -->
@@ -177,12 +208,27 @@
 	            </view-param>
 	        </redirect>
 	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToAddDocumentPage</from-outcome>
+	        <to-view-id>/pages/account/add_documents.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{listFieldBean.paramId}</value>
+	            </view-param>
+	            <view-param>
+	                <name>type</name>
+	                <value>f</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 	    <from-view-id>/pages/account/main.xhtml</from-view-id>
 	    <navigation-case>
-	        <from-outcome>successToViewScreenPage</from-outcome>
+	        <from-outcome>successToScreenDetailPage</from-outcome>
 	        <to-view-id>/pages/account/screen/edit_screen.xhtml</to-view-id>
 	        <redirect include-view-params="true">
 	            <view-param>
@@ -193,8 +239,19 @@
 	    </navigation-case>
 	    
 	    <navigation-case>
-	        <from-outcome>successToViewFieldPage</from-outcome>
+	        <from-outcome>successToFieldDetailPage</from-outcome>
 	        <to-view-id>/pages/account/field/edit_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{searchBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	     <navigation-case>
+	        <from-outcome>successToProductDetailPage</from-outcome>
+	        <to-view-id>/pages/account/product/edit_product.xhtml</to-view-id>
 	        <redirect include-view-params="true">
 	            <view-param>
 	                <name>id</name>
@@ -244,10 +301,21 @@
 	</navigation-rule>
 	
 	<navigation-rule>
-	    <from-view-id>/pages/account/edit_screen.xhtml</from-view-id>
+	    <from-view-id>/pages/account/screen/edit_screen.xhtml</from-view-id>
 	    <navigation-case>
-	        <from-outcome>successToViewFieldsPage</from-outcome>
-	        <to-view-id>/pages/account/list_field.xhtml</to-view-id>
+	        <from-outcome>successToFieldsPage</from-outcome>
+	        <to-view-id>/pages/account/field/list_field.xhtml</to-view-id>
+	        <redirect include-view-params="true">
+	            <view-param>
+	                <name>id</name>
+	                <value>#{screenBean.paramId}</value>
+	            </view-param>
+	        </redirect>
+	    </navigation-case>
+	    
+	    <navigation-case>
+	        <from-outcome>successToImagePage</from-outcome>
+	        <to-view-id>/pages/account/screen/add_fields_screen.xhtml</to-view-id>
 	        <redirect include-view-params="true">
 	            <view-param>
 	                <name>id</name>

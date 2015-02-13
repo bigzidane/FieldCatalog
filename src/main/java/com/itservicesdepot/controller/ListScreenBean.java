@@ -57,6 +57,7 @@ public class ListScreenBean extends BaseBean {
     private VersionService versionService;
 	
 	private List<Screen> screens;
+	private List<Screen> allScreens;		// for Screen filter
 	
 	private User selectedOwner;
 	private List<User> owners;
@@ -72,6 +73,7 @@ public class ListScreenBean extends BaseBean {
 		String productVersionId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("id");
 		if (ValidateUtils.isObjectNotEmpty(productVersionId)) {
 			this.screens = this.screenService.getScreensByProductVersion(productVersionId);
+			this.allScreens = this.screenService.getUniqueScreens(productVersionId);
 			this.allProductVersions = new ArrayList<ProductVersion>();
 			
 			ProductVersion pv = this.versionService.getProductVersionOnly(Integer.valueOf(productVersionId));
@@ -82,8 +84,9 @@ public class ListScreenBean extends BaseBean {
 		}
 		else {
 			this.screens = this.screenService.getScreens();
+			this.allScreens = this.screenService.getUniqueScreens();
 			this.products = this.productService.getProducts(); 
-			this.allProductVersions = this.versionService.getVersions();
+			this.allProductVersions = this.versionService.getUniqueVersions();
 		}
 		
 		this.owners = userService.getUsers();
@@ -97,6 +100,11 @@ public class ListScreenBean extends BaseBean {
 	public String showScreenImage(Screen screen) {
 		this.setParamId(screen.getId());
 		return NavigationConstant.NAV_TO_IMAGE;
+	}
+	
+	public String showAddDocument(Screen screen) {
+		this.setParamId(screen.getId());
+		return NavigationConstant.NAV_TO_ADD_DOCUMENT;
 	}
 	
 	public String showScreenMap(Screen screen) {
@@ -187,5 +195,13 @@ public class ListScreenBean extends BaseBean {
 
 	public void setAllProductVersions(List<ProductVersion> allProductVersions) {
 		this.allProductVersions = allProductVersions;
+	}
+
+	public List<Screen> getAllScreens() {
+		return allScreens;
+	}
+
+	public void setAllScreens(List<Screen> allScreens) {
+		this.allScreens = allScreens;
 	}
 }

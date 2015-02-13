@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.itservicesdepot.constant.ApplicationConstant;
 import com.itservicesdepot.utils.ApplicationUtils;
 
 @Entity
@@ -220,5 +221,9 @@ public class User extends DateTrackingBase {
 	}
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+	
+	public boolean isSysAdmin() {
+		return this.email.startsWith(ApplicationConstant.SYS_ADMIN) ? true : false;
 	}
 }

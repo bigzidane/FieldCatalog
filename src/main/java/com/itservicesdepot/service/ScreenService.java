@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.itservicesdepot.model.Result;
 import com.itservicesdepot.model.Screen;
+import com.itservicesdepot.model.ScreenDocument;
 
 public interface ScreenService {
 
@@ -29,6 +30,8 @@ public interface ScreenService {
 
 	public Result addScreen(Screen screen);
 
+	public int saveUpdateScreen(Screen screen);
+	
 	public int updateScreen(Screen screen);
 
 	public int deleteScreen(Screen screen);
@@ -40,4 +43,10 @@ public interface ScreenService {
 	public Screen getScreenOnly(int id);
 	
 	public List<Screen> searchByKeyword(String keyword) throws Exception;
+	
+	public int addDocument(ScreenDocument document);
+	
+	public List<Screen> getUniqueScreens();
+	
+	public List<Screen> getUniqueScreens(String productVersionId);
 }

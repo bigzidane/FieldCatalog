@@ -71,6 +71,10 @@ public class Screen extends DateTrackingBase {
     )
 	private List<Field> fields = new ArrayList<Field>();
 	
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name = "SCREEN_ID")
+	private List<ScreenDocument> screenDocuments = new ArrayList<ScreenDocument>();
+	
 	@Column(name = "NAME",unique=true)
 	@org.hibernate.search.annotations.Field(index=Index.YES, analyze=Analyze.YES, store=Store.NO)
 	private String name;
@@ -181,6 +185,12 @@ public class Screen extends DateTrackingBase {
 		
 		return this.getScreenCustFields().size() > 0 ? true : false;
 	}
+	
+	public boolean getDocumentAvailable() {
+		if (ValidateUtils.isObjectEmpty(this.getScreenDocuments())) return false;
+		
+		return this.getScreenDocuments().size() > 0 ? true : false;
+	}
 
 	public List<ScreenGroup> getScreenGroups() {
 		return screenGroups;
@@ -255,5 +265,13 @@ public class Screen extends DateTrackingBase {
 
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+
+	public List<ScreenDocument> getScreenDocuments() {
+		return screenDocuments;
+	}
+
+	public void setScreenDocuments(List<ScreenDocument> screenDocuments) {
+		this.screenDocuments = screenDocuments;
 	}
 }

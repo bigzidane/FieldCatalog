@@ -10,7 +10,9 @@ package com.itservicesdepot.dao;
 
 import java.util.List;
 
+import com.itservicesdepot.model.ClonedObject;
 import com.itservicesdepot.model.Field;
+import com.itservicesdepot.model.FieldDocument;
 
 public interface FieldDAO {
 
@@ -33,4 +35,16 @@ public interface FieldDAO {
 	public Field getField(String id);
 	
 	public List<Field> searchByKeyword(String keyword) throws Exception;
+	
+	public List<ClonedObject> getClonedFieldMapping(int productVersionId);
+	
+	public void updateDependentIds(int id, String dependentIds);
+	
+	public FieldDocument getDocument(String name, int screenId);
+
+	public int addDocument(FieldDocument document);
+	
+	public List<Field> getUniqueFields();
+	
+	public List<Field> getUniqueFieldsByScreenId(int screenId);
 }

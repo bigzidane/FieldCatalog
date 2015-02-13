@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +41,7 @@ import com.itservicesdepot.model.Event;
 import com.itservicesdepot.model.EventValue;
 import com.itservicesdepot.model.Field;
 import com.itservicesdepot.model.FieldCustField;
+import com.itservicesdepot.model.FieldDocument;
 import com.itservicesdepot.model.FieldEvent;
 import com.itservicesdepot.model.FieldGroup;
 import com.itservicesdepot.model.FieldMessage;
@@ -157,6 +159,8 @@ public class FieldBean extends BaseBean {
     // for navigation view
     private TreeNode navigationRoot;
     
+    private FieldDocument selectedDocument;
+    
 	@PostConstruct
     public void init() {
 		this.owners = this.userService.getUsers();
@@ -263,7 +267,7 @@ public class FieldBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.field.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				this.field.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()).get(0));
 			}
             
 			this.buildFieldModel(this.field, currentUserId, this.screen);
@@ -315,7 +319,7 @@ public class FieldBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.field.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				this.field.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()).get(0));
 			}
 			
 			Field dbField = this.fieldService.getField(field.getId());
@@ -475,17 +479,21 @@ public class FieldBean extends BaseBean {
 	}
 	
 	private void buildFieldCustFieldModelEdit(Field field) {
-		
-		for (FieldCustField fieldCustField : field.getFieldCustFields()) {
-			CustField custField = fieldCustField.getCustField();
-			String id = String.format("%s%s%s", custField.getFieldId(), ApplicationConstant.CUST_FIELD_SEPARATOR, custField.getId());
-			
-			if (ValidateUtils.isObjectNotEmpty(this.custFieldValues.get(id))) {
-				fieldCustField.setValue(this.custFieldValues.get(id).toString());
+		if (ValidateUtils.isObjectNotEmpty(field.getFieldCustFields())) {
+			for (FieldCustField fieldCustField : field.getFieldCustFields()) {
+				CustField custField = fieldCustField.getCustField();
+				String id = String.format("%s%s%s", custField.getFieldId(), ApplicationConstant.CUST_FIELD_SEPARATOR, custField.getId());
+				
+				if (ValidateUtils.isObjectNotEmpty(this.custFieldValues.get(id))) {
+					fieldCustField.setValue(this.custFieldValues.get(id).toString());
+				}
+				else {
+					fieldCustField.setValue("");
+				}
 			}
-			else {
-				fieldCustField.setValue("");
-			}
+		}
+		else {
+			buildFieldCustFieldModel(field);
 		}
 	}
 
@@ -510,12 +518,16 @@ public class FieldBean extends BaseBean {
 	}
 	
 	private void buildFieldEventModelEdit(Field field) {
-		
-		for (FieldEvent fieldEvent : field.getFieldEvents()) {
-			Event event = fieldEvent.getEvent();
-			String id = String.format("%s%s%s", event.getName(), ApplicationConstant.CUST_FIELD_SEPARATOR, event.getId());
-			
-			fieldEvent.setEventValue(this.eventValues.get(id));
+		if (ValidateUtils.isObjectNotEmpty(field.getFieldEvents())) {
+			for (FieldEvent fieldEvent : field.getFieldEvents()) {
+				Event event = fieldEvent.getEvent();
+				String id = String.format("%s%s%s", event.getName(), ApplicationConstant.CUST_FIELD_SEPARATOR, event.getId());
+				
+				fieldEvent.setEventValue(this.eventValues.get(id));
+			}
+		}
+		else {
+			buildFieldEventModel(field);
 		}
 	}
 	
@@ -927,5 +939,22 @@ public class FieldBean extends BaseBean {
 
 	public void setScreenService(ScreenService screenService) {
 		this.screenService = screenService;
+	}
+	
+	public StreamedContent getFileDownload() {
+		try {
+			StreamedContent file = this.fileStorageService.getStreamedContent(this.selectedDocument.getFile(), this.selectedDocument.getName());
+	        
+	        return file;
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' file is NOT found. Please contact System Administrator.",this.selectedDocument.getName())));
+			logger.error(e.getMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	public void setSelectedDocument(FieldDocument document) {
+		this.selectedDocument = document;
 	}
 }

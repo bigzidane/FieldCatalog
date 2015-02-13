@@ -8,12 +8,29 @@
 
 package com.itservicesdepot.model;
 
-public class SearchResult {
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+public class SearchResult implements Serializable, Comparable<SearchResult> {
+	private static final long serialVersionUID = -4678663438097973182L;
 	
 	private int id;
 	private String name;
 	private String type;
 	private String description;
+	private int count;
+	private String extraInfo;
+	
+	public SearchResult() {
+	}
+	
+	public SearchResult(int id, String name, String type, String description) {
+		this.id = id;
+		this.name = name;
+        this.type = type;
+        this.description = description;
+    }
 	
 	public String getName() {
 		return name;
@@ -38,6 +55,46 @@ public class SearchResult {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	@Override
+	public int compareTo(SearchResult arg0) {
+		 return this.getName().compareTo(arg0.getName());
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        
+        SearchResult other = (SearchResult) obj;
+        if (this.getId() == other.getId() && this.getName().equals(other.getName())) return true;
+        
+        return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(51, 79).   
+			      append(id).append(name).
+			      toHashCode();
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public String getExtraInfo() {
+		return extraInfo;
+	}
+
+	public void setExtraInfo(String extraInfo) {
+		this.extraInfo = extraInfo;
 	}
 
 }

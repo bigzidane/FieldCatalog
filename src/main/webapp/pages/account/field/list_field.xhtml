@@ -24,7 +24,7 @@
         		<f:facet name="right">
         			<p:selectOneMenu id="fieldFilter" onchange="onFieldChange(this)">
 		                <f:selectItem itemLabel="Select Field" itemValue=""/>
-		                <f:selectItems value="#{listFieldBean.fields}" var="field" itemLabel="#{field.name}" itemValue="#{field.id}"/>
+		                <f:selectItems value="#{listFieldBean.allFields}" var="field" itemLabel="#{field.name}" itemValue="#{field.id}"/>
 		            </p:selectOneMenu>
 		            
 		            <span class="ui-separator"/>
@@ -90,9 +90,12 @@
 	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
 	                </h:outputText>
 	            </p:column>
-	            <p:column headerText="Owner" width="8%"  filterBy="#{field.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
+	            <p:column headerText="Owner" width="7%"  filterBy="#{field.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
 	                <h:outputText value="#{field.owner.displayName}">
 	                </h:outputText>
+	            </p:column>
+	            <p:column width="1%">
+	             	<p:commandLink value="+" action="#{listFieldBean.showAddDocument(field)}" title="Add Documents" style="text-decoration:none;" /> 
 	            </p:column>
 	        </p:dataTable>
 		</h:form>

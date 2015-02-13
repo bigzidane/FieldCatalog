@@ -65,7 +65,7 @@ public class ListProductBean extends BaseBean {
 	public void init() {
 		this.products = this.productService.getProducts();
 		this.productVersions = this.versionService.getProductVersions(); 
-		this.allProductVersions = this.versionService.getVersions();
+		this.allProductVersions = this.versionService.getUniqueVersions();
 		
 		this.owners = userService.getUsers();
 	}
@@ -73,6 +73,11 @@ public class ListProductBean extends BaseBean {
 	public String showProduct(ProductVersion productVersion) {
 		this.setParamId(productVersion.getId());
 		return NavigationConstant.NAV_TO_PRODUCT_DETAIL;
+	}
+	
+	public String showAddDocument(ProductVersion productVersion) {
+		this.setParamId(productVersion.getId());
+		return NavigationConstant.NAV_TO_ADD_DOCUMENT;
 	}
 	
 	public String showProductMap(ProductVersion productVersion) {

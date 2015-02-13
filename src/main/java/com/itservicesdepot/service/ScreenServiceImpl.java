@@ -22,6 +22,7 @@ import com.itservicesdepot.constant.ErrorCodeConstant;
 import com.itservicesdepot.dao.ScreenDAO;
 import com.itservicesdepot.model.Result;
 import com.itservicesdepot.model.Screen;
+import com.itservicesdepot.model.ScreenDocument;
 import com.itservicesdepot.utils.ValidateUtils;
 
 @Service("screenService")
@@ -51,6 +52,12 @@ public class ScreenServiceImpl implements ScreenService {
     }
     
     /*** Annotation of applying method level Spring Security ***/
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = false)
+    public int saveUpdateScreen(Screen screen) {
+        return screenDAO.saveUpdateScreen(screen);
+    }
+    
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional(readOnly = false)
     public int updateScreen(Screen screen) {
@@ -139,5 +146,23 @@ public class ScreenServiceImpl implements ScreenService {
     	parentIds = StringUtils.removeEnd(parentIds, ApplicationConstant.COMMA_SEPARATOR);
 
     	return this.screenDAO.getScreenNameByIds(parentIds);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = false)
+    public int addDocument(ScreenDocument document) {
+    	ScreenDocument screenDocument = this.screenDAO.getDocument(document.getName(), document.getTarget().getId());
+    	if (ValidateUtils.isObjectEmpty(screenDocument)) {
+    		return this.screenDAO.addDocument(document);
+    	}
+    	return 0;
+    }
+    
+    public List<Screen> getUniqueScreens() {
+    	return this.screenDAO.getUniqueScreens();
+    }
+    
+    public List<Screen> getUniqueScreens(String productVersionId) {
+    	return this.screenDAO.getUniqueScreens(productVersionId);
     }
 }

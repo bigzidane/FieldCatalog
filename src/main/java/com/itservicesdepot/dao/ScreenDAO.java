@@ -10,7 +10,9 @@ package com.itservicesdepot.dao;
 
 import java.util.List;
 
+import com.itservicesdepot.model.ClonedObject;
 import com.itservicesdepot.model.Screen;
+import com.itservicesdepot.model.ScreenDocument;
 
 public interface ScreenDAO {
 
@@ -24,7 +26,9 @@ public interface ScreenDAO {
 
 	public int addScreen(Screen product);
 
-	public int updateScreen(Screen product);
+	public int saveUpdateScreen(Screen screen);
+	
+	public int updateScreen(Screen screen);
 
 	public int deleteScreen(Screen product);
 
@@ -37,4 +41,16 @@ public interface ScreenDAO {
 	public List<Screen> searchByKeyword(String keyword)  throws Exception;
 	
 	public List<Screen> getScreenNameByIds(String ids);
+	
+	public List<ClonedObject> getClonedScreenMapping(int productVersionId);
+	
+	public void updateParentIds(int id, String parentIds);
+	
+	public ScreenDocument getDocument(String name, int screenId);
+
+	public int addDocument(ScreenDocument document);
+	
+	public List<Screen> getUniqueScreens();
+	
+	public List<Screen> getUniqueScreens(String productVersionId);
 }

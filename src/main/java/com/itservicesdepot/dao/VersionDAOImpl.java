@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.itservicesdepot.constant.DAOConstant;
 import com.itservicesdepot.model.ProductVersion;
-import com.itservicesdepot.model.Result;
+import com.itservicesdepot.model.ProductVersionDocument;
 import com.itservicesdepot.model.Screen;
 import com.itservicesdepot.model.ScreenVersion;
 
@@ -38,7 +38,7 @@ public class VersionDAOImpl implements VersionDAO {
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-	public List<ProductVersion> getVersions() {
+	public List<ProductVersion> getUniqueVersions() {
     	Query query = sessionFactory.getCurrentSession().createSQLQuery("select distinct name from PRODUCT_VERSION");
     	query.setResultTransformer(new AliasToBeanResultTransformer(ProductVersion.class));
     	return query.list();
@@ -77,6 +77,7 @@ public class VersionDAOImpl implements VersionDAO {
         	Hibernate.initialize(productVersion.getProduct().getProductCustFields());
         	Hibernate.initialize(productVersion.getProduct().getProductGroups());
         	Hibernate.initialize(productVersion.getProduct().getProductTags());
+        	Hibernate.initialize(productVersion.getProductVersionDocuments());
 
         	return productVersion;
         }
@@ -158,12 +159,14 @@ public class VersionDAOImpl implements VersionDAO {
 	}
 	
 	@Transactional(propagation = Propagation.MANDATORY)
-	public void addProductVersion(ProductVersion productVersion) {
+	public int addProductVersion(ProductVersion productVersion) {
 		sessionFactory.getCurrentSession().save(productVersion);
+		
+		return productVersion.getId();
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY)
-	public Result cloneProductVersion(ProductVersion productVersion, int actorId) {
+	public int cloneProductVersion(ProductVersion productVersion, int actorId) {
 		Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.CLONE_PRODUCT_VERSION);
 		query.setParameter("productVersionId", productVersion.getCloneFromVersionId());
 		query.setParameter("productVersionName", productVersion.getName());
@@ -172,9 +175,31 @@ public class VersionDAOImpl implements VersionDAO {
 		
 		Object cloneResult = (Object)query.uniqueResult();
 		
-		Result result = new Result();
-		result.setMessage(cloneResult.toString());
-		
-		return result;
+		return Integer.valueOf(cloneResult.toString());
 	}
+	
+    @SuppressWarnings("rawtypes")
+	public ProductVersionDocument getDocument(String name, int screenId) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ProductVersionDocument.class);
+    	criteria.add(Restrictions.eq("name", name));
+    	criteria.add(Restrictions.eq("target.id", screenId));
+    	
+    	List result = criteria.list();
+        if (result.size() > 0) {
+        	ProductVersionDocument productVersionDocument = (ProductVersionDocument)result.get(0);
+
+        	return productVersionDocument;
+        }
+        else {
+            return null;
+        }
+
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public int addDocument(ProductVersionDocument document) {
+    	sessionFactory.getCurrentSession().save(document);
+    	
+    	return document.getId(); 
+    }
 }

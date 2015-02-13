@@ -125,18 +125,24 @@ public class UserMgntBean extends BaseBean {
         try {
        		buildUserGroupModel(user);
         	
-        	this.getUserService().updateUser(user);
+        	Result result = this.getUserService().updateUser(user);
         	
-        	this.users = this.getUserService().getUsers();
-        	
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Information", String.format("The '%s' user is update successfully.", this.user.getEmail())));
-
-        	this.reset();
-        	
-            return ApplicationConstant.SUCCESS;
+        	if (result.isSuccess()) {
+	        	this.users = this.getUserService().getUsers();
+	        	
+	        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Information", String.format("The '%s' user is update successfully.", this.user.getEmail())));
+	
+	        	this.reset();
+	        	
+	            return ApplicationConstant.SUCCESS;
+        	}
+        	else if (result.getCode() == ErrorCodeConstant.ERROR_CHANGE_SYSTEM_ENTRY) {
+        		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' user is NOT updated successfully. This user is a System Administrator one.", this.user.getEmail())));
+        	}
+        	return ApplicationConstant.ERROR;
             
         } catch (Exception e) {
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' user is NOT updated successfully.. Please contact System Administrator.", this.user.getEmail())));
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' user is NOT updated successfully. Please contact System Administrator.", this.user.getEmail())));
         	
         	logger.error(e.getMessage(), e);
         	
@@ -156,6 +162,9 @@ public class UserMgntBean extends BaseBean {
 			}
 			else if (result.getCode() == ErrorCodeConstant.ERROR_DELETE_ENTRY_FOREIGN_KEY_VIOLATION) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' user is NOT deleted successfully. The user has been assigned already across the system. Please contact System Administrator.", user.getEmail())));
+			}
+			else if (result.getCode() == ErrorCodeConstant.ERROR_CHANGE_SYSTEM_ENTRY) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' user is NOT deleted successfully. This user is System Adminstrator.", user.getEmail())));
 			}
 			
 			return ApplicationConstant.SUCCESS;

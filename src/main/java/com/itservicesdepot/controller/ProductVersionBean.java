@@ -19,14 +19,20 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.itservicesdepot.constant.ErrorCodeConstant;
 import com.itservicesdepot.constant.NavigationConstant;
+import com.itservicesdepot.model.Field;
 import com.itservicesdepot.model.Product;
 import com.itservicesdepot.model.ProductVersion;
 import com.itservicesdepot.model.Result;
+import com.itservicesdepot.model.Screen;
+import com.itservicesdepot.model.SearchResult;
+import com.itservicesdepot.service.FieldService;
 import com.itservicesdepot.service.ProductService;
 import com.itservicesdepot.service.UserService;
 import com.itservicesdepot.service.VersionService;
@@ -53,6 +59,9 @@ public class ProductVersionBean extends BaseBean {
 	@ManagedProperty("#{versionService}")
     private VersionService versionService;
 	
+	@ManagedProperty("#{fieldService}")
+    private FieldService fieldService;
+	
 	@ManagedProperty("#{userService}")
     private UserService userService;
 	
@@ -61,7 +70,9 @@ public class ProductVersionBean extends BaseBean {
 	
 	private ProductVersion newProductVersion = new ProductVersion();
 	private ProductVersion productVersion;	
-	private List<ProductVersion> productVersions;				
+	private List<ProductVersion> productVersions;
+	
+	private TreeNode newProductVersionResult;
 	
 	@PostConstruct
 	public void init() {
@@ -93,6 +104,10 @@ public class ProductVersionBean extends BaseBean {
 			if (result.getCode() == ErrorCodeConstant.SUCCESS) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Information", String.format("The product '%s' version '%s' is added successfully. Please contact System Administrator.", this.product.getName(), newProductVersion.getName())));
 				
+				if (ValidateUtils.isObjectNotEmpty(this.productVersion)) {
+					this.newProductVersionResult = this.createResult(result.getId());
+				}
+				
 				return NavigationConstant.NAV_TO_LIST_PRODUCTS;
 			}
 			else if (result.getCode() == ErrorCodeConstant.DUPLICATE_ENTRY) {
@@ -110,6 +125,26 @@ public class ProductVersionBean extends BaseBean {
 		}
 	}
 
+	public TreeNode createResult(int id) {
+		TreeNode root = new DefaultTreeNode(new SearchResult(0, "Result",  "Result", "Result"), null);
+		
+		List<Screen> screens = this.versionService.getScreensByProductVersionId(id);
+		
+		for (Screen screen : screens) {
+			TreeNode screenNode = new DefaultTreeNode(new SearchResult(screen.getId(), screen.getName(), "Screen", screen.getDescription()), root);
+			
+			List<Field> fields = this.fieldService.getFieldsByScreenId(screen.getId());
+			SearchResult data = (SearchResult)screenNode.getData();
+			data.setCount(fields.size());
+			
+			for (Field field : fields) {
+				new DefaultTreeNode(new SearchResult(field.getId(), field.getName(), "Field", field.getDescription()), screenNode);
+			}
+		}
+        
+        return root;
+    }
+	
 	public ProductService getProductService() {
 		return productService;
 	}
@@ -172,6 +207,30 @@ public class ProductVersionBean extends BaseBean {
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+
+	public TreeNode getNewProductVersionResult() {
+		return newProductVersionResult;
+	}
+
+	public void setNewProductVersionResult(TreeNode newProductVersionResult) {
+		this.newProductVersionResult = newProductVersionResult;
+	}
+
+	public FieldService getFieldService() {
+		return fieldService;
+	}
+
+	public void setFieldService(FieldService fieldService) {
+		this.fieldService = fieldService;
+	}
+	
+	public boolean getAddProductVersionResult() {
+		if (ValidateUtils.isObjectNotEmpty(newProductVersionResult)) {
+			return newProductVersionResult.getChildCount() > 0 ? true : false;
+		}
+		
+		return false;
 	}
 	
 }

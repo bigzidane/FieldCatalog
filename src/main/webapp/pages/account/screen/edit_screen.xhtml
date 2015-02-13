@@ -76,7 +76,8 @@
 				        
 				        <p:outputLabel id="outTxtFileId" for="attachedFile" value="Image"></p:outputLabel>
 				        <p:outputPanel>
-					        <p:outputLabel id="outTxtAttachedFileId" value="#{!screenBean.screen.hasAttachedFile ? 'Empty' : screenBean.screen.attachedFile}"></p:outputLabel>
+				        	<p:commandLink value="View" action="#{screenBean.showScreenImage}" rendered="#{screenBean.screen.hasAttachedFile}"/>
+				        	<p:spacer width="10px"></p:spacer>
 		                    <p:fileUpload id="attachedFile" value="#{screenBean.attachedFile}" mode="simple" skinSimple="true" disabled="#{sessionMgntBean.hasInsufficientRoles('role_designer,role_admin')}"/>
 	                    </p:outputPanel>
 			        </h:panelGrid>
@@ -165,6 +166,19 @@
 				<p:tab title="Custom Fields" rendered="#{screenBean.screen.custFieldAvailable}">
 					<h:panelGrid columns="2" binding="#{screenBean.custFieldGroup}">
 					</h:panelGrid>
+				</p:tab>
+				
+				<p:tab title="Document" rendered="#{screenBean.screen.documentAvailable}">
+					<p:dataTable id="documentDataTable" var="document" value="#{screenBean.screen.screenDocuments}">
+				        <p:column headerText="Name" styleClass="alignLeft">
+				            <p:commandLink value="#{document.name}" ajax="false" actionListener="#{screenBean.setSelectedDocument(document)}">
+				            	<p:fileDownload value="#{screenBean.fileDownload}" />
+				            </p:commandLink>
+				        </p:column>
+				        <p:column headerText="Size" styleClass="alignLeft">
+				        	<p:outputLabel value="#{document.sizeDisplay}"></p:outputLabel>
+				        </p:column>
+				    </p:dataTable>
 				</p:tab>
 			</p:tabView>			                
 			

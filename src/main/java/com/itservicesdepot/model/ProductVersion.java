@@ -41,6 +41,10 @@ public class ProductVersion extends BaseModel {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productVersion", cascade=CascadeType.ALL)
 	private List<Screen> screen = new ArrayList<Screen>();
 	
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name = "PRODUCT_VERSION_ID")
+	private List<ProductVersionDocument> productVersionDocuments = new ArrayList<ProductVersionDocument>();
+	
 	@Column(name="isActive", nullable = true)
 	private String isActive = "Y";
 	
@@ -136,6 +140,10 @@ public class ProductVersion extends BaseModel {
 		}
 	}
 
+	public boolean getDocumentAvailable() {
+		return ValidateUtils.isObjectEmpty(this.getProductVersionDocuments()) ? false : true;
+	}
+	
 	public int getCloneFromVersionId() {
 		return cloneFromVersionId;
 	}
@@ -150,5 +158,14 @@ public class ProductVersion extends BaseModel {
 
 	public void setScreensCount(int screensCount) {
 		this.screensCount = screensCount;
+	}
+
+	public List<ProductVersionDocument> getProductVersionDocuments() {
+		return productVersionDocuments;
+	}
+
+	public void setProductVersionDocuments(
+			List<ProductVersionDocument> productVersionDocuments) {
+		this.productVersionDocuments = productVersionDocuments;
 	}
 }

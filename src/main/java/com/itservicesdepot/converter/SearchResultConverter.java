@@ -8,6 +8,7 @@ import org.dozer.ConfigurableCustomConverter;
 import org.dozer.Mapper;
 import org.dozer.MapperAware;
 
+import com.itservicesdepot.model.BaseDocument;
 import com.itservicesdepot.model.Field;
 import com.itservicesdepot.model.Product;
 import com.itservicesdepot.model.Screen;
@@ -41,6 +42,11 @@ public class SearchResultConverter  implements ConfigurableCustomConverter, Mapp
 							}
 							else if (o instanceof Product) {
 								searchResult.setType("Product");
+							}
+							if (o instanceof BaseDocument) {
+								BaseDocument bd = (BaseDocument)o;
+								searchResult.setType("Document");
+								searchResult.setExtraInfo(bd.getFile());
 							}
 							dest.add(searchResult);
 						}

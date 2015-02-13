@@ -65,6 +65,10 @@ public class Field extends DateTrackingBase {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.field", cascade=CascadeType.ALL, orphanRemoval=true)
 	private List<FieldMessage> fieldMessages = new ArrayList<FieldMessage>();
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name = "FIELD_ID")
+	private List<FieldDocument> fieldDocuments = new ArrayList<FieldDocument>();
 
 	@Column(name = "NAME",unique=true)
 	@org.hibernate.search.annotations.Field(index=Index.YES, analyze=Analyze.YES, store=Store.NO)
@@ -175,6 +179,10 @@ public class Field extends DateTrackingBase {
 		
 		return this.getFieldCustFields().size() > 0 ? true : false;
 	}
+	
+	public boolean getDocumentAvailable() {
+		return ValidateUtils.isObjectEmpty(this.getFieldDocuments()) ? false : true;
+	}
 
 	public List<FieldGroup> getFieldGroups() {
 		return fieldGroups;
@@ -245,5 +253,13 @@ public class Field extends DateTrackingBase {
 
 	public void setDependentId(String dependentId) {
 		this.dependentId = dependentId;
+	}
+
+	public List<FieldDocument> getFieldDocuments() {
+		return fieldDocuments;
+	}
+
+	public void setFieldDocuments(List<FieldDocument> fieldDocuments) {
+		this.fieldDocuments = fieldDocuments;
 	}
 }

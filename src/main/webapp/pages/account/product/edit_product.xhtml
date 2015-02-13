@@ -103,6 +103,19 @@
 					<h:panelGrid columns="2" binding="#{productBean.custFieldGroup}">
 					</h:panelGrid>
 				</p:tab>
+				
+				<p:tab title="Document" rendered="#{productBean.productVersion.documentAvailable}">
+					<p:dataTable id="documentDataTable" var="document" value="#{productBean.productVersion.productVersionDocuments}">
+				        <p:column headerText="Name" styleClass="alignLeft">
+				            <p:commandLink value="#{document.name}" ajax="false" actionListener="#{productBean.setSelectedDocument(document)}">
+				            	<p:fileDownload value="#{productBean.fileDownload}" />
+				            </p:commandLink>
+				        </p:column>
+				        <p:column headerText="Size" styleClass="alignLeft">
+				        	<p:outputLabel value="#{document.sizeDisplay}"></p:outputLabel>
+				        </p:column>
+				    </p:dataTable>
+				</p:tab>
 			</p:tabView>			                
 			
 			<p:commandButton value="Save" action="#{productBean.update(productBean.productVersion.product)}" icon="ui-icon-disk" update="formProduct" oncomplete="if (!args.validationFailed) { onSaveProductCompletion(); }"  rendered="#{sessionMgntBean.hasSufficientRoles('role_designer,role_admin')}"/>  

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.itservicesdepot.constant.ApplicationConstant;
 import com.itservicesdepot.dao.FieldDAO;
 import com.itservicesdepot.model.Field;
+import com.itservicesdepot.model.FieldDocument;
 import com.itservicesdepot.utils.ValidateUtils;
 
 @Service("fieldService")
@@ -109,4 +110,23 @@ public class FieldServiceImpl implements FieldService {
     		return fieldDAO.searchByKeyword(keyword);
     	}
     }
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = false)
+    public int addDocument(FieldDocument document) {
+    	FieldDocument fieldDocument = this.fieldDAO.getDocument(document.getName(), document.getTarget().getId());
+    	if (ValidateUtils.isObjectEmpty(fieldDocument)) {
+    		return this.fieldDAO.addDocument(document);
+    	}
+    	return 0;
+    }
+    
+    public List<Field> getUniqueFields() {
+    	return this.fieldDAO.getUniqueFields();
+    }
+    
+    public List<Field> getUniqueFieldsByScreenId(int screenId) {
+    	return this.fieldDAO.getUniqueFieldsByScreenId(screenId);
+    }
+    
 }

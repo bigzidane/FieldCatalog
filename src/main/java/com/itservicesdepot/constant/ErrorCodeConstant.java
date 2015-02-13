@@ -21,4 +21,5 @@ public class ErrorCodeConstant {
 	public static int DUPLICATE_ENTRY = 1;
 	public static int ERROR_DELETE_ENTRY_FOREIGN_KEY_VIOLATION = 2;
 	public static int ERROR_ADD_ENTRY_NAME_VIOLATION = 3;
+	public static int ERROR_CHANGE_SYSTEM_ENTRY = 4;
 }

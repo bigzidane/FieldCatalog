@@ -11,6 +11,7 @@ package com.itservicesdepot.service;
 import java.util.List;
 
 import com.itservicesdepot.model.Field;
+import com.itservicesdepot.model.FieldDocument;
 
 public interface FieldService {
 
@@ -35,4 +36,10 @@ public interface FieldService {
 	public List<Field> searchByKeyword(String keyword) throws Exception;
 	
 	public List<Field> getDependentIdFields(String dependentIds);
+	
+	public int addDocument(FieldDocument document);
+	
+	public List<Field> getUniqueFields();
+	
+	public List<Field> getUniqueFieldsByScreenId(int screenId);
 }

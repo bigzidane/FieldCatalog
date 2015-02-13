@@ -11,6 +11,7 @@ package com.itservicesdepot.dao;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,7 +31,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itservicesdepot.constant.DAOConstant;
+import com.itservicesdepot.model.ClonedObject;
 import com.itservicesdepot.model.Field;
+import com.itservicesdepot.model.FieldDocument;
+import com.itservicesdepot.utils.ValidateUtils;
 
 @Repository
 public class FieldDAOImpl implements FieldDAO {
@@ -58,6 +63,7 @@ public class FieldDAOImpl implements FieldDAO {
         	Hibernate.initialize(field.getFieldGroups());
         	Hibernate.initialize(field.getFieldEvents());
         	Hibernate.initialize(field.getFieldMessages());
+        	Hibernate.initialize(field.getFieldDocuments());
         	
         	return field;
         }
@@ -190,5 +196,84 @@ public class FieldDAOImpl implements FieldDAO {
         uniqueFields.addAll(fieldMessages);
         
         return new ArrayList<Field>(uniqueFields);
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public List<ClonedObject> getClonedFieldMapping(int productVersionId) {
+    	List<ClonedObject> clonedFields = new ArrayList<ClonedObject>();
+    	
+    	Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.GET_CLONED_FIELD_MAPPING_QUERY);
+    	query.setParameter("id", productVersionId);
+    	
+    	List result = query.list();
+    	
+    	Iterator it = result.iterator();
+		while ( it.hasNext() ) {
+			Object[] objects = (Object[])it.next();
+			
+			ClonedObject cs = new ClonedObject();
+			cs.setSourceId(Integer.valueOf(objects[0].toString()));
+			cs.setTaretId(Integer.valueOf(objects[1].toString()));
+			
+			if (ValidateUtils.isObjectNotEmpty(objects[2])) {
+				cs.setRelatedIds(objects[2].toString());
+			}
+			else {
+				cs.setRelatedIds(null);
+			}
+			
+			clonedFields.add(cs);
+		}
+    	
+		return clonedFields;
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void updateDependentIds(int id, String dependentIds) {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.UPDATE_FIELD_DEPENDENT_IDS_QUERY);
+		query.setParameter("id", id);
+		query.setParameter("dependentIds", dependentIds);
+		
+		query.executeUpdate();
+	}
+    
+    @SuppressWarnings("rawtypes")
+	public FieldDocument getDocument(String name, int screenId) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(FieldDocument.class);
+    	criteria.add(Restrictions.eq("name", name));
+    	criteria.add(Restrictions.eq("target.id", screenId));
+    	
+    	List result = criteria.list();
+        if (result.size() > 0) {
+        	FieldDocument fieldDocument = (FieldDocument)result.get(0);
+
+        	return fieldDocument;
+        }
+        else {
+            return null;
+        }
+
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public int addDocument(FieldDocument document) {
+    	sessionFactory.getCurrentSession().save(document);
+    	
+    	return document.getId(); 
+    }
+    
+    @SuppressWarnings("unchecked")
+   	public List<Field> getUniqueFields() {
+       	Query query = sessionFactory.getCurrentSession().createSQLQuery("select distinct name from FIELD");
+       	query.setResultTransformer(new AliasToBeanResultTransformer(Field.class));
+       	return query.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Field> getUniqueFieldsByScreenId(int screenId) {
+    	Query query = sessionFactory.getCurrentSession().createSQLQuery("select distinct name from FIELD where screen_Id=:id");
+    	query.setParameter("id", screenId);
+       	query.setResultTransformer(new AliasToBeanResultTransformer(Field.class));
+       	return query.list();
     }
 }

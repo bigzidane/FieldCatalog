@@ -11,6 +11,8 @@ package com.itservicesdepot.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.hibernate.collection.internal.PersistentBag;
+
 public class ValidateUtils {
 	
 	public static boolean isObjectEmpty(Object o) {
@@ -20,6 +22,10 @@ public class ValidateUtils {
 			@SuppressWarnings("rawtypes")
 			ArrayList array = (ArrayList)o;
 			if (array.isEmpty()) return true;
+		}
+		else if (o instanceof PersistentBag) {
+			PersistentBag p = (PersistentBag)o;
+			if (p.isEmpty()) return true;
 		}
 		else if (o instanceof String) {
 			String string = (String)o;

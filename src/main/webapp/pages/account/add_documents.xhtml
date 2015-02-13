@@ -1,0 +1,34 @@
+<ui:composition template="/pages/template/layout.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">Add Documents/Artifacts</ui:define>
+
+	<ui:define name='divMain'>
+		<h:form id="formScreen">
+			<p:toolbar styleClass="marginTab removePadding">
+        		<f:facet name="left">
+        			<p:breadCrumb styleClass="navBar removeBorder">
+		    			<p:menuitem value="Home" url="/pages/account/main.xhtml" />
+		    			<p:menuitem value="Add Documents - #{documentMgntBean.caption}"/>
+		    		</p:breadCrumb>
+        		</f:facet>
+        	</p:toolbar>
+        	
+        	<p:outputPanel styleClass="ui-messages-warn ui-corner-all">
+        		<p:outputLabel value="Note: Select multiple documents to upload. Maximum files are 5 and maximum size is 10MB." ></p:outputLabel>
+        	</p:outputPanel>
+    		
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />
+			
+			<p:fileUpload fileUploadListener="#{documentMgntBean.handleFileUpload}" 
+							multiple="true" dragDropSupport="true" fileLimit="5"
+							sizeLimit="1024000">
+			</p:fileUpload>
+		</h:form>
+	</ui:define> 
+</ui:composition>

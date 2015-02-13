@@ -40,7 +40,7 @@ body {
 }
 
 .alignLeft {
-	text-align: left;
+	text-align: left !important;
 	align: left;
 }
 

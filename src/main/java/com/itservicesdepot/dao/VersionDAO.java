@@ -11,13 +11,13 @@ package com.itservicesdepot.dao;
 import java.util.List;
 
 import com.itservicesdepot.model.ProductVersion;
-import com.itservicesdepot.model.Result;
+import com.itservicesdepot.model.ProductVersionDocument;
 import com.itservicesdepot.model.Screen;
 import com.itservicesdepot.model.ScreenVersion;
 
 public interface VersionDAO {
 
-	public List<ProductVersion> getVersions();
+	public List<ProductVersion> getUniqueVersions();
 	
 	public ProductVersion getProductVersionOnly(int id);
 	
@@ -35,7 +35,11 @@ public interface VersionDAO {
 	
 	public ProductVersion getProductVersion(String productName, String productVersionName);
 	
-	public void addProductVersion(ProductVersion productVersion);
+	public int addProductVersion(ProductVersion productVersion);
 	
-	public Result cloneProductVersion(ProductVersion productVersion, int actorId);
+	public int cloneProductVersion(ProductVersion productVersion, int actorId);
+	
+	public ProductVersionDocument getDocument(String name, int screenId);
+
+	public int addDocument(ProductVersionDocument document);
 }

@@ -23,6 +23,8 @@ public class NavigationConstant {
 	
 	public static String NAV_TO_IMAGE = "successToImagePage";
 	
+	public static String NAV_TO_ADD_DOCUMENT = "successToAddDocumentPage";
+	
 	public static String NAV_TO_SCREEN_DETAIL = "successToScreenDetailPage";
 	
 	public static String NAV_TO_FIELD_DETAIL = "successToFieldDetailPage";

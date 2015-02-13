@@ -62,6 +62,7 @@ public class ListFieldBean extends BaseBean {
     private UserService userService;
 	
 	private List<Field> fields;
+	private List<Field> allFields;
 	
 	private User selectedOwner;
 	private List<User> owners;
@@ -78,6 +79,7 @@ public class ListFieldBean extends BaseBean {
 		String screenId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("id");
 		if (ValidateUtils.isObjectNotEmpty(screenId)) {
 			this.fields = this.fieldService.getFieldsByScreenId(Integer.valueOf(screenId));
+			this.allFields = this.fieldService.getUniqueFieldsByScreenId(Integer.valueOf(screenId));
 			
 			this.screens = new ArrayList<Screen>();
 			Screen screen = this.screenService.getScreenOnly(Integer.valueOf(screenId));
@@ -91,10 +93,11 @@ public class ListFieldBean extends BaseBean {
 		}
 		else {
 			this.fields = fieldService.getFields();
+			this.allFields = this.fieldService.getUniqueFields();
 			
-			this.screens = this.screenService.getScreens();
+			this.screens = this.screenService.getUniqueScreens();
 			this.products = this.productService.getProducts(); 
-			this.allProductVersions = this.versionService.getVersions();
+			this.allProductVersions = this.versionService.getUniqueVersions();
 		}
 		 
 		this.owners = userService.getUsers();
@@ -103,6 +106,11 @@ public class ListFieldBean extends BaseBean {
 	public String showField(Field field) {
 		this.setParamId(field.getId());
 		return NavigationConstant.NAV_TO_FIELD_DETAIL;
+	}
+	
+	public String showAddDocument(Field field) {
+		this.setParamId(field.getId());
+		return NavigationConstant.NAV_TO_ADD_DOCUMENT;
 	}
 	
 	public FieldService getFieldService() {
@@ -207,6 +215,14 @@ public class ListFieldBean extends BaseBean {
 
 	public void setAllProductVersions(List<ProductVersion> allProductVersions) {
 		this.allProductVersions = allProductVersions;
+	}
+
+	public List<Field> getAllFields() {
+		return allFields;
+	}
+
+	public void setAllFields(List<Field> allFields) {
+		this.allFields = allFields;
 	}
 
 	

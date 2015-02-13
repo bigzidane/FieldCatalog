@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.itservicesdepot.constant.ApplicationConstant;
 import com.itservicesdepot.constant.ErrorCodeConstant;
+import com.itservicesdepot.constant.NavigationConstant;
 import com.itservicesdepot.model.CustField;
 import com.itservicesdepot.model.Event;
 import com.itservicesdepot.model.EventValue;
@@ -46,6 +48,7 @@ import com.itservicesdepot.model.ProductVersion;
 import com.itservicesdepot.model.Result;
 import com.itservicesdepot.model.Screen;
 import com.itservicesdepot.model.ScreenCustField;
+import com.itservicesdepot.model.ScreenDocument;
 import com.itservicesdepot.model.ScreenEvent;
 import com.itservicesdepot.model.ScreenGroup;
 import com.itservicesdepot.model.ScreenMessage;
@@ -155,6 +158,8 @@ public class ScreenBean extends BaseBean {
     private TreeNode navigationRoot;
     
     private int paramId;
+    
+    private ScreenDocument selectedDocument;
     
 	@PostConstruct
     public void init() {
@@ -284,7 +289,8 @@ public class ScreenBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.screen.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				String fileNameSaved = fileStorageService.getFileName(ApplicationConstant.SCREEN_TARGET_KEY, String.valueOf(this.productVersion.getId()), this.screen.getName(), fAttachedFile.getName());
+				this.screen.setAttachedFile(fileStorageService.storeFile(fileNameSaved, attachedFile.getInputstream()).get(0));
 			}
             
             this.buildScreenModel(this.screen, currentUserId);
@@ -317,7 +323,8 @@ public class ScreenBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.screen.setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				String fileNameSaved = fileStorageService.getFileName(ApplicationConstant.SCREEN_TARGET_KEY, String.valueOf(this.productVersion.getId()), this.screen.getName(), fAttachedFile.getName());
+				this.screen.setAttachedFile(fileStorageService.storeFile(fileNameSaved, attachedFile.getInputstream()).get(0));
 			}
 			
 			this.buildScreenModel(screen, currentUserId);
@@ -327,7 +334,7 @@ public class ScreenBean extends BaseBean {
 			this.buildScreenCustFieldModelEdit(screen);
 			this.buildScreenEventModelEdit(screen);
 			
-			this.screenService.updateScreen(screen);
+			this.screenService.saveUpdateScreen(screen);
 			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Information", String.format("The '%s' screen has been updated to the system successfully.",screen.getName()))); 
 			
@@ -512,7 +519,12 @@ public class ScreenBean extends BaseBean {
 	
 	public String showFields(Screen screen) {
 		this.setParamId(screen.getId());
-		return "successToViewFieldsPage";
+		return NavigationConstant.NAV_TO_LIST_FIELDS;
+	}
+	
+	public String showScreenImage() {
+		this.setParamId(screen.getId());
+		return NavigationConstant.NAV_TO_IMAGE;
 	}
 	
 	public List<Tag> completeTag(String tagName) {
@@ -906,5 +918,22 @@ public class ScreenBean extends BaseBean {
 
 	public void setNavigationRoot(TreeNode navigationRoot) {
 		this.navigationRoot = navigationRoot;
+	}
+	
+	public StreamedContent getFileDownload() {
+		try {
+			StreamedContent file = this.fileStorageService.getStreamedContent(this.selectedDocument.getFile(), this.selectedDocument.getName());
+	        
+	        return file;
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' file is NOT found. Please contact System Administrator.",this.selectedDocument.getName())));
+			logger.error(e.getMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	public void setSelectedDocument(ScreenDocument document) {
+		this.selectedDocument = document;
 	}
 }

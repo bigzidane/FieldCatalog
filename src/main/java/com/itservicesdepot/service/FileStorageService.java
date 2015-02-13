@@ -9,10 +9,20 @@
 package com.itservicesdepot.service;
 
 import java.io.InputStream;
+import java.util.List;
+
+import org.primefaces.model.StreamedContent;
 
 
 public interface FileStorageService {
+	
+	public static String DATA_DIR = System.getenv("OPENSHIFT_DATA_DIR");
 
-	public String storeFile(String baseFileName, InputStream in);
+	public List<String> storeFile(String baseFileName, InputStream in);
+	
+	public String getFileName(String prefix, String key, String name, String originalfileName);
+	
+	public boolean copyFile(String sourceFileName, String destFileName);
 
+	public StreamedContent getStreamedContent(String fileName, String fileDisplay) throws Exception;
 }

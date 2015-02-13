@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.itservicesdepot.service.FileStorageService;
 import com.itservicesdepot.utils.ValidateUtils;
 
 public class ImageServlet extends HttpServlet {
@@ -28,13 +29,12 @@ public class ImageServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		String filename = request.getPathInfo().substring(1);
-		String basePath = System.getenv("OPENSHIFT_DATA_DIR");
-
+		String dataDir = FileStorageService.DATA_DIR;
+		
 		// development env only
-		if (ValidateUtils.isObjectEmpty(basePath)) {
-			basePath = "c:\\temp\\upload\\images\\";
-		}
-        File file = new File(basePath, filename);
+		if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";
+		
+        File file = new File(dataDir, filename);
         
         response.setHeader("Content-Type", new MimetypesFileTypeMap().getContentType(file));
         response.setHeader("Content-Length", String.valueOf(file.length()));

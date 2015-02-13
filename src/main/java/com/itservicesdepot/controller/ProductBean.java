@@ -25,6 +25,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,7 @@ import com.itservicesdepot.model.Product;
 import com.itservicesdepot.model.ProductCustField;
 import com.itservicesdepot.model.ProductGroup;
 import com.itservicesdepot.model.ProductVersion;
+import com.itservicesdepot.model.ProductVersionDocument;
 import com.itservicesdepot.model.Result;
 import com.itservicesdepot.model.Tag;
 import com.itservicesdepot.model.User;
@@ -106,6 +108,8 @@ public class ProductBean extends BaseBean {
 	private DualListModel<Group> viewGroup;
 	private DualListModel<Group> designGroup;
 
+	private ProductVersionDocument selectedDocument;
+	
 	@PostConstruct
     public void init() {
 		this.owners = this.userService.getUsers();
@@ -182,7 +186,7 @@ public class ProductBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.productVersion.getProduct().setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				this.productVersion.getProduct().setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()).get(0));
 			}
             
             buildProductModel(this.productVersion.getProduct(), currentUserId);
@@ -214,7 +218,7 @@ public class ProductBean extends BaseBean {
 			
 			if (attachedFile != null) {
 				File fAttachedFile = new File(attachedFile.getFileName());
-				this.productVersion.getProduct().setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()));
+				this.productVersion.getProduct().setAttachedFile(fileStorageService.storeFile(fAttachedFile.getName(), attachedFile.getInputstream()).get(0));
 			}
 			
 			this.buildProductModelEdit(product, currentUserId);
@@ -534,5 +538,22 @@ public class ProductBean extends BaseBean {
 
 	public void setProductVersion(ProductVersion productVersion) {
 		this.productVersion = productVersion;
+	}
+	
+	public StreamedContent getFileDownload() {
+		try {
+			StreamedContent file = this.fileStorageService.getStreamedContent(this.selectedDocument.getFile(), this.selectedDocument.getName());
+	        
+	        return file;
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' file is NOT found. Please contact System Administrator.",this.selectedDocument.getName())));
+			logger.error(e.getMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	public void setSelectedDocument(ProductVersionDocument document) {
+		this.selectedDocument = document;
 	}
 }

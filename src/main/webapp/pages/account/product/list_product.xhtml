@@ -81,9 +81,12 @@
 	                	<f:convertDateTime pattern="MM//dd/yyyy"/>
 	                </h:outputText>
 	            </p:column>
-	            <p:column headerText="Owner" width="10%" filterBy="#{productVersion.product.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
+	            <p:column headerText="Owner" width="9%" filterBy="#{productVersion.product.owner.displayName}" filterMatchMode="contains" filterStyleClass="hide">
 	                <h:outputText value="#{productVersion.product.owner.displayName}">
 	                </h:outputText>
+	            </p:column>
+	            <p:column width="1%">
+	             	<p:commandLink value="+" action="#{listProductBean.showAddDocument(productVersion)}" title="Add Documents" style="text-decoration:none;" /> 
 	            </p:column>
 	        </p:dataTable>
 		</h:form>

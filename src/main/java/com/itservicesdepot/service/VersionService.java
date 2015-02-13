@@ -11,13 +11,14 @@ package com.itservicesdepot.service;
 import java.util.List;
 
 import com.itservicesdepot.model.ProductVersion;
+import com.itservicesdepot.model.ProductVersionDocument;
 import com.itservicesdepot.model.Result;
 import com.itservicesdepot.model.Screen;
 import com.itservicesdepot.model.ScreenVersion;
 
 public interface VersionService {
 
-	public List<ProductVersion> getVersions();
+	public List<ProductVersion> getUniqueVersions();
 	
 	public ProductVersion getProductVersionOnly(int id);
 	
@@ -35,5 +36,7 @@ public interface VersionService {
 	
 	public ProductVersion getProductVersion(String productName, String productVersionName);
 	
-	public Result addProductVersion(ProductVersion productVersion, int actorId);
+	public Result addProductVersion(ProductVersion productVersion, int actorId) throws Exception;
+	
+	public int addDocument(ProductVersionDocument document);
 }

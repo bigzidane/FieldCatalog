@@ -18,14 +18,19 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.hibernate.search.errors.EmptyQueryException;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.itservicesdepot.constant.NavigationConstant;
+import com.itservicesdepot.model.Documents;
 import com.itservicesdepot.model.Fields;
 import com.itservicesdepot.model.Products;
 import com.itservicesdepot.model.Screens;
 import com.itservicesdepot.model.SearchResult;
 import com.itservicesdepot.model.SearchResults;
+import com.itservicesdepot.service.DocumentService;
 import com.itservicesdepot.service.FieldService;
+import com.itservicesdepot.service.FileStorageService;
 import com.itservicesdepot.service.ProductService;
 import com.itservicesdepot.service.ScreenService;
 import com.itservicesdepot.utils.ValidateUtils;
@@ -46,6 +51,7 @@ public class SearchBean extends BaseBean {
 	private Products productList = new Products();
 	private Screens screenList = new Screens();
 	private Fields fieldList = new Fields();
+	private Documents documentList = new Documents();
 	private SearchResults searchResultList = new SearchResults();
 	
 	@ManagedProperty("#{productService}")
@@ -57,10 +63,18 @@ public class SearchBean extends BaseBean {
 	@ManagedProperty("#{fieldService}")
     private FieldService fieldService;
 	
+	@ManagedProperty("#{documentService}")
+    private DocumentService documentService;
+	
+	@ManagedProperty("#{fileStorageService}")
+    private FileStorageService fileStorageService;
+	
 	@Autowired
     private SessionMgntBean sessionMgntBean;
 	
 	private String paramId;
+	
+	private SearchResult selectedSearchResult;
 	
 	@PostConstruct
     public void init() {
@@ -89,6 +103,10 @@ public class SearchBean extends BaseBean {
 			else if (this.searchIn.equalsIgnoreCase("field")) {
 				this.fieldList.setFields(this.fieldService.searchByKeyword(this.searchFor));
 				this.searchResultList = mapper.map(this.fieldList, SearchResults.class);
+			}
+			else if (this.searchIn.equalsIgnoreCase("document")) {
+				this.documentList.setDocuments(this.documentService.searchByKeyword(this.searchFor));
+				this.searchResultList = mapper.map(this.documentList, SearchResults.class);
 			}
 			else {
 				this.productList.setProducts(this.productService.searchByKeyword(this.searchFor));
@@ -141,17 +159,33 @@ public class SearchBean extends BaseBean {
 		this.setParamId(String.valueOf(searchResult.getId()));
 		
 		if (mode.equals("0") && searchResult.getType().equalsIgnoreCase("Screen")) {
-			return "successToViewScreenPage";
+			return NavigationConstant.NAV_TO_SCREEN_DETAIL;
 		}
 		else if (mode.equals("0") && searchResult.getType().equalsIgnoreCase("Field")) {
-			return "successToViewFieldPage";
+			return NavigationConstant.NAV_TO_FIELD_DETAIL;
+		}
+		if (mode.equals("0") && searchResult.getType().equalsIgnoreCase("Product")) {
+			return NavigationConstant.NAV_TO_PRODUCT_DETAIL;
 		}
 		else if (mode.equals("1")) {
-			return "successToImagePage";
+			return NavigationConstant.NAV_TO_IMAGE;
 		}
 		else {
 			return "";
 		}
+	}
+	
+	public StreamedContent getFileDownload() {
+		try {
+			StreamedContent file = this.fileStorageService.getStreamedContent(this.selectedSearchResult.getExtraInfo(), this.selectedSearchResult.getName());
+	        
+	        return file;
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The '%s' file is NOT found. Please contact System Administrator.",this.selectedSearchResult.getName())));
+			logger.error(e.getMessage(), e);
+		}
+		
+		return null;
 	}
 	
 	public String getSearchIn() {
@@ -258,5 +292,37 @@ public class SearchBean extends BaseBean {
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
+	}
+
+	public Documents getDocumentList() {
+		return documentList;
+	}
+
+	public void setDocumentList(Documents documentList) {
+		this.documentList = documentList;
+	}
+
+	public DocumentService getDocumentService() {
+		return documentService;
+	}
+
+	public void setDocumentService(DocumentService documentService) {
+		this.documentService = documentService;
+	}
+
+	public SearchResult getSelectedSearchResult() {
+		return selectedSearchResult;
+	}
+
+	public void setSelectedSearchResult(SearchResult selectedSearchResult) {
+		this.selectedSearchResult = selectedSearchResult;
+	}
+
+	public FileStorageService getFileStorageService() {
+		return fileStorageService;
+	}
+
+	public void setFileStorageService(FileStorageService fileStorageService) {
+		this.fileStorageService = fileStorageService;
 	}
 }

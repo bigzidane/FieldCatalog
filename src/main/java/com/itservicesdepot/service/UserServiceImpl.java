@@ -72,6 +72,12 @@ public class UserServiceImpl implements UserService {
 	public Result updateUser(User user) {
     	Result result = new Result();
     	
+    	if (user.isSysAdmin()) {
+    		result.setCode(ErrorCodeConstant.ERROR_CHANGE_SYSTEM_ENTRY);
+    		return result;
+    		
+    	}
+    	
 		userDAO.updateUser(user);
 		
 		return result;
@@ -82,6 +88,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = false)
 	public Result deleteUser(User user) {
     	Result result = new Result();
+    	
+    	if (user.isSysAdmin()) {
+    		result.setCode(ErrorCodeConstant.ERROR_CHANGE_SYSTEM_ENTRY);
+    		return result;
+    		
+    	}
     	
     	int usedCount = this.userDAO.getUserUsedCount(user.getId());
 		if (usedCount > 0) {

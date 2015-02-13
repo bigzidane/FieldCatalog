@@ -24,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,7 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.itservicesdepot.constant.ApplicationConstant;
 import com.itservicesdepot.constant.DAOConstant;
+import com.itservicesdepot.model.ClonedObject;
 import com.itservicesdepot.model.Screen;
+import com.itservicesdepot.model.ScreenDocument;
+import com.itservicesdepot.utils.ValidateUtils;
 
 @Repository
 public class ScreenDAOImpl implements ScreenDAO {
@@ -121,7 +125,7 @@ public class ScreenDAOImpl implements ScreenDAO {
         	Hibernate.initialize(screen.getScreenGroups());
         	Hibernate.initialize(screen.getScreenEvents());
         	Hibernate.initialize(screen.getScreenMessages());
-        	
+        	Hibernate.initialize(screen.getScreenDocuments());
         	return screen;
         }
         else
@@ -163,8 +167,15 @@ public class ScreenDAOImpl implements ScreenDAO {
     }
     
     @Transactional(propagation = Propagation.MANDATORY)
-    public int updateScreen(Screen screen) {
+    public int saveUpdateScreen(Screen screen) {
     	sessionFactory.getCurrentSession().saveOrUpdate(screen);
+    	
+    	return screen.getId();
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public int updateScreen(Screen screen) {
+    	sessionFactory.getCurrentSession().update(screen);
     	
     	return screen.getId();
     }
@@ -239,5 +250,84 @@ public class ScreenDAOImpl implements ScreenDAO {
     	Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.GET_SCREEN_NAME_QUERY).setResultTransformer(Transformers.aliasToBean(Screen.class));
     	query.setParameterList("ids", ids.split(ApplicationConstant.COMMA_SEPARATOR));
 		return query.list();
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public List<ClonedObject> getClonedScreenMapping(int productVersionId) {
+    	List<ClonedObject> clonedScreens = new ArrayList<ClonedObject>();
+    	
+    	Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.GET_CLONED_SCREEN_MAPPING_QUERY);
+    	query.setParameter("id", productVersionId);
+    	
+    	List result = query.list();
+    	
+    	Iterator it = result.iterator();
+		while ( it.hasNext() ) {
+			Object[] objects = (Object[])it.next();
+			
+			ClonedObject cs = new ClonedObject();
+			cs.setSourceId(Integer.valueOf(objects[0].toString()));
+			cs.setTaretId(Integer.valueOf(objects[1].toString()));
+			
+			if (ValidateUtils.isObjectNotEmpty(objects[2])) {
+				cs.setRelatedIds(objects[2].toString());
+			}
+			else {
+				cs.setRelatedIds(null);
+			}
+			
+			clonedScreens.add(cs);
+		}
+    	
+		return clonedScreens;
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void updateParentIds(int id, String parentIds) {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(DAOConstant.UPDATE_SCREEN_PARENT_IDS_QUERY);
+		query.setParameter("id", id);
+		query.setParameter("parentIds", parentIds);
+		
+		query.executeUpdate();
+	}
+    
+    @SuppressWarnings("rawtypes")
+	public ScreenDocument getDocument(String name, int screenId) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ScreenDocument.class);
+    	criteria.add(Restrictions.eq("name", name));
+    	criteria.add(Restrictions.eq("target.id", screenId));
+    	
+    	List result = criteria.list();
+        if (result.size() > 0) {
+        	ScreenDocument screenDocument = (ScreenDocument)result.get(0);
+
+        	return screenDocument;
+        }
+        else {
+            return null;
+        }
+
+    }
+    
+    @Transactional(propagation = Propagation.MANDATORY)
+    public int addDocument(ScreenDocument document) {
+    	sessionFactory.getCurrentSession().save(document);
+    	
+    	return document.getId(); 
+    }
+    
+    @SuppressWarnings("unchecked")
+   	public List<Screen> getUniqueScreens() {
+       	Query query = sessionFactory.getCurrentSession().createSQLQuery("select distinct name from SCREEN");
+       	query.setResultTransformer(new AliasToBeanResultTransformer(Screen.class));
+       	return query.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Screen> getUniqueScreens(String productVersionId) {
+    	Query query = sessionFactory.getCurrentSession().createSQLQuery("select distinct name from SCREEN where product_Version_Id=:id");
+    	query.setParameter("id", productVersionId);
+       	query.setResultTransformer(new AliasToBeanResultTransformer(Screen.class));
+       	return query.list();
     }
 }

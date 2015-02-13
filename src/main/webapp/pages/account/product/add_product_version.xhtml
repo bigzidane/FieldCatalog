@@ -41,6 +41,20 @@
 				<p:commandButton id="btnOpen" value="Save" action="#{productVersionBean.addProductVersion}" icon="ui-icon-open" update="formProduct"/>
 				
 			</p:panel>
+			
+			<p:panel id="pnlLog" header="All Screens and Fields cloned for this version" rendered="#{productVersionBean.addProductVersionResult}">
+				<p:treeTable value="#{productVersionBean.newProductVersionResult}" var="productVersionResult">
+			        <p:column headerText="Name">
+			            <h:outputText value="#{productVersionResult.name}" />
+			        </p:column>
+			        <p:column headerText="type">
+			            <h:outputText value="#{productVersionResult.type}" />
+			        </p:column>
+			        <p:column headerText="Description">
+			            <h:outputText value="#{productVersionResult.description}" />
+			        </p:column>
+				</p:treeTable>
+			</p:panel>
 		</h:form>
 	</ui:define> 
 </ui:composition>
