@@ -38,10 +38,8 @@ public class FileStorageServiceImpl implements FileStorageService {
 	 */
 	public List<String> storeFile(String baseFileName, InputStream in) {
 		try {
-			String dataDir = FileStorageService.DATA_DIR;
+			String dataDir = FileStorageServiceImpl.getDataDirectory();
 			long size = 0;
-			// development env only
-			if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";
 
 			OutputStream out = new FileOutputStream(new File(dataDir + baseFileName));
 
@@ -83,10 +81,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 	public boolean copyFile (String sourceFileName, String destFileName) {
 		boolean result = true;
 
-		String dataDir = FileStorageService.DATA_DIR;
-		
-		// development env only
-		if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";	
+		String dataDir = FileStorageServiceImpl.getDataDirectory();
 		
 		File sourceFile = new  File(dataDir + sourceFileName);
 		File destFile = new  File(dataDir + destFileName);
@@ -108,10 +103,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 	 * @throws Exception
 	 */
 	public StreamedContent getStreamedContent(String fileName, String fileDisplay) throws Exception  {
-		String dataDir = FileStorageService.DATA_DIR;
-		
-		// development env only
-		if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";
+		String dataDir = FileStorageServiceImpl.getDataDirectory();
 		
 		File docFile = new File(dataDir, fileName);
 		InputStream inputStream = FileUtils.openInputStream(docFile);
@@ -119,5 +111,14 @@ public class FileStorageServiceImpl implements FileStorageService {
 		StreamedContent file = new DefaultStreamedContent(inputStream,new MimetypesFileTypeMap().getContentType(docFile.getName()), fileDisplay);
 	        
 	    return file;
+	}
+	
+	public static String getDataDirectory() {
+		String dataDir = FileStorageService.DATA_DIR;
+		
+		// development env only
+		if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";
+		
+		return dataDir;
 	}
 }

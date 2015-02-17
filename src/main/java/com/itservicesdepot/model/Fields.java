@@ -7,6 +7,14 @@ public class Fields extends BaseModel {
 	
 	private List<Field> fields;
 
+	public Fields() {
+		
+	}
+	
+	public Fields(List<Field> fields) {
+		this.fields = fields;
+	}
+	
 	public List<Field> getFields() {
 		return fields;
 	}

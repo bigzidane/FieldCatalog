@@ -18,8 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.itservicesdepot.service.FileStorageService;
-import com.itservicesdepot.utils.ValidateUtils;
+import com.itservicesdepot.service.FileStorageServiceImpl;
 
 public class ImageServlet extends HttpServlet {
 	private static final long serialVersionUID = -8476741726923861990L;
@@ -29,10 +28,7 @@ public class ImageServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		String filename = request.getPathInfo().substring(1);
-		String dataDir = FileStorageService.DATA_DIR;
-		
-		// development env only
-		if (ValidateUtils.isObjectEmpty(dataDir)) dataDir = "c:\\temp\\";
+		String dataDir = FileStorageServiceImpl.getDataDirectory();
 		
         File file = new File(dataDir, filename);
         

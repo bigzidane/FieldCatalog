@@ -56,4 +56,7 @@ public class ApplicationConstant {
 	public static String CHILD_SCREEN_NODE_COLOR = "82c542";
 	public static String FIELD_NODE_COLOR = "648b36";
 	public static String ROOT_NODE_COLOR = "FFCC00";
+	
+	public static String MICROSOFT_WORD_EXTENSION = "DOC";
+	public static String MICROSOFT_WORD_X_EXTENSION = "DOCX";
 }

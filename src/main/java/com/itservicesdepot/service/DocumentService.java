@@ -16,4 +16,6 @@ public interface DocumentService {
 
 	public List<BaseDocument> searchByKeyword(String keyword) throws Exception;
 	
+	public List<BaseDocument> searchInContentByKeywork(String keyword) throws Exception;
+	
 }

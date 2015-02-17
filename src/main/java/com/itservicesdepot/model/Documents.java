@@ -7,6 +7,14 @@ public class Documents extends BaseModel {
 
 	private List<BaseDocument> documents;
 
+	public Documents() {
+		
+	}
+	
+	public Documents(List<BaseDocument> documents) {
+		this.documents = documents;
+	}
+	
 	public List<BaseDocument> getDocuments() {
 		return documents;
 	}

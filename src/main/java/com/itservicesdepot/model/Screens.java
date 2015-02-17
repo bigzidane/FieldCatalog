@@ -7,6 +7,14 @@ public class Screens extends BaseModel {
 	
 	private List<Screen> screens;
 
+	public Screens() {
+		
+	}
+	
+	public Screens(List<Screen> screens) {
+		this.screens = screens;
+	}
+	
 	public List<Screen> getScreens() {
 		return screens;
 	}

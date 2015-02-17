@@ -48,10 +48,6 @@ public class SearchBean extends BaseBean {
 	private String searchIn;
 	private String searchFor;
 	
-	private Products productList = new Products();
-	private Screens screenList = new Screens();
-	private Fields fieldList = new Fields();
-	private Documents documentList = new Documents();
 	private SearchResults searchResultList = new SearchResults();
 	
 	@ManagedProperty("#{productService}")
@@ -93,30 +89,34 @@ public class SearchBean extends BaseBean {
 		
 		try {
 			if (this.searchIn.equalsIgnoreCase("product")) {
-				this.productList.setProducts(this.productService.searchByKeyword(this.searchFor));
-				this.searchResultList = mapper.map(this.productList, SearchResults.class);
+				Products productList = new Products(this.productService.searchByKeyword(this.searchFor));
+				this.searchResultList = mapper.map(productList, SearchResults.class);
 			}
 			else if (this.searchIn.equalsIgnoreCase("screen")) {
-				this.screenList.setScreens(this.screenService.searchByKeyword(this.searchFor));
-				this.searchResultList = mapper.map(this.screenList, SearchResults.class);
+				Screens screenList = new Screens(this.screenService.searchByKeyword(this.searchFor));
+				this.searchResultList = mapper.map(screenList, SearchResults.class);
 			}
 			else if (this.searchIn.equalsIgnoreCase("field")) {
-				this.fieldList.setFields(this.fieldService.searchByKeyword(this.searchFor));
-				this.searchResultList = mapper.map(this.fieldList, SearchResults.class);
+				Fields fieldList = new Fields(this.fieldService.searchByKeyword(this.searchFor));
+				this.searchResultList = mapper.map(fieldList, SearchResults.class);
 			}
 			else if (this.searchIn.equalsIgnoreCase("document")) {
-				this.documentList.setDocuments(this.documentService.searchByKeyword(this.searchFor));
-				this.searchResultList = mapper.map(this.documentList, SearchResults.class);
+				Documents documentList = new Documents(this.documentService.searchByKeyword(this.searchFor));
+				this.searchResultList = mapper.map(documentList, SearchResults.class);
+			}
+			else if (this.searchIn.equalsIgnoreCase("document content")) {
+				Documents documentList = new Documents(this.documentService.searchInContentByKeywork(this.searchFor));
+				this.searchResultList = mapper.map(documentList, SearchResults.class);
 			}
 			else {
-				this.productList.setProducts(this.productService.searchByKeyword(this.searchFor));
-				SearchResults searchResultProductList = mapper.map(this.productList, SearchResults.class);
+				Products productList = new Products(this.productService.searchByKeyword(this.searchFor));
+				SearchResults searchResultProductList = mapper.map(productList, SearchResults.class);
 				
-				this.screenList.setScreens(this.screenService.searchByKeyword(this.searchFor));
-				SearchResults searchResultScreenList = mapper.map(this.screenList, SearchResults.class);
+				Screens screenList = new Screens(this.screenService.searchByKeyword(this.searchFor));
+				SearchResults searchResultScreenList = mapper.map(screenList, SearchResults.class);
 				
-				this.fieldList.setFields(this.fieldService.searchByKeyword(this.searchFor));
-				SearchResults searchResultFeildList = mapper.map(this.fieldList, SearchResults.class);
+				Fields fieldList = new Fields(this.fieldService.searchByKeyword(this.searchFor));
+				SearchResults searchResultFeildList = mapper.map(fieldList, SearchResults.class);
 				
 				this.searchResultList.add(searchResultProductList);
 				this.searchResultList.add(searchResultScreenList);
@@ -230,30 +230,6 @@ public class SearchBean extends BaseBean {
 		this.paramId = paramId;
 	}
 
-	public Screens getScreens() {
-		return screenList;
-	}
-
-	public void setScreens(Screens screens) {
-		this.screenList = screens;
-	}
-
-	public Screens getScreenList() {
-		return screenList;
-	}
-
-	public void setScreenList(Screens screenList) {
-		this.screenList = screenList;
-	}
-
-	public Fields getFieldList() {
-		return fieldList;
-	}
-
-	public void setFieldList(Fields fieldList) {
-		this.fieldList = fieldList;
-	}
-
 	public SearchResults getSearchResultList() {
 		return searchResultList;
 	}
@@ -278,28 +254,12 @@ public class SearchBean extends BaseBean {
 		this.sessionMgntBean = sessionMgntBean;
 	}
 
-	public Products getProductList() {
-		return productList;
-	}
-
-	public void setProductList(Products productList) {
-		this.productList = productList;
-	}
-
 	public ProductService getProductService() {
 		return productService;
 	}
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
-	}
-
-	public Documents getDocumentList() {
-		return documentList;
-	}
-
-	public void setDocumentList(Documents documentList) {
-		this.documentList = documentList;
 	}
 
 	public DocumentService getDocumentService() {
